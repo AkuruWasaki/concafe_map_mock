@@ -1,15 +1,25 @@
 package main
 
 import (
+	"fmt"
+
+	"github.com/akuruwasaki/concafe_map_mock/db"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	router := gin.Default()
-	router.GET("/con-cafe", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "concafe map",
-		})
+	router.GET("/", func(c *gin.Context) {
+		c.String(200, "Hello, World")
 	})
-	router.Run() // listen and serve on 0.0.0.0:8080
+	db := db.Connect()
+	defer db.Close()
+
+	err := db.Ping()
+
+	if err != nil {
+		fmt.Println("データベース接続失敗")
+	} else {
+		fmt.Println("データベース接続成功")
+	}
 }
