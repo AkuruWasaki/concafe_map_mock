@@ -12,4 +12,5 @@ RUN go get github.com/gin-gonic/gin \
   && go get github.com/go-sql-driver/mysql \ 
   && go get github.com/volatiletech/sqlboiler/v4@latest \
   && go get github.com/volatiletech/sqlboiler/v4/drivers/sqlboiler-mysql@latest \
-  && go get github.com/joho/godotenv
+  && go get github.com/joho/godotenv \
+  && go get github.com/akuruwasaki/concafe_map_mock/db
