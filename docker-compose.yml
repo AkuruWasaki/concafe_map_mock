@@ -9,10 +9,16 @@ services:
       - .:/app
     ports:
       - ${HOST_WEB_PORT}:8080
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_HOST: concafe_map_mysql
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     depends_on:
       - "db"
   db:
     image: mysql:8.0
+    container_name: concafe_map_mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}

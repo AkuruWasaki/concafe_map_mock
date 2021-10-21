@@ -18,8 +18,6 @@ func main() {
 	err := db.Ping()
 
 	if err != nil {
-		fmt.Println(err)
-
 		fmt.Println("データベース接続失敗")
 	} else {
 		fmt.Println("データベース接続成功")
