@@ -1,9 +1,8 @@
-module concafe_map
+module github.com/akuruwasaki/concafe_map_mock
 
 go 1.17
 
 require (
-	github.com/akuruwasaki/concafe_map_mock/db v0.0.0-20211020065647-1d199a94ae77
 	github.com/friendsofgo/errors v0.9.2
 	github.com/gin-gonic/gin v1.7.4
 	github.com/go-sql-driver/mysql v1.6.0
@@ -47,5 +46,3 @@ require (
 	gopkg.in/ini.v1 v1.63.2 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
-
-replace github.com/akuruwasaki/concafe_map_mock/db => ./db

@@ -4,14 +4,10 @@ import (
 	"fmt"
 
 	"github.com/akuruwasaki/concafe_map_mock/db"
-	"github.com/gin-gonic/gin"
+	"github.com/akuruwasaki/concafe_map_mock/server"
 )
 
 func main() {
-	router := gin.Default()
-	router.GET("/", func(c *gin.Context) {
-		c.String(200, "Hello, World")
-	})
 	db := db.Connect()
 	defer db.Close()
 
@@ -22,4 +18,6 @@ func main() {
 	} else {
 		fmt.Println("データベース接続成功")
 	}
+
+	server.Init()
 }
