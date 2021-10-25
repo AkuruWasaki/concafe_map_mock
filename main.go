@@ -11,12 +11,9 @@ func main() {
 	db := db.Connect()
 	defer db.Close()
 
-	err := db.Ping()
-
-	if err != nil {
+	if err := db.Ping(); err != nil {
 		fmt.Println("データベース接続失敗")
-	} else {
-		fmt.Println("データベース接続成功")
+		panic(err)
 	}
 
 	server.Init()
