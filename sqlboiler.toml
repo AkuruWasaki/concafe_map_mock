@@ -6,6 +6,5 @@
   pass       = "root"
   sslmode    = "false"
   whitelist = [
-    "users",
     "shops"
   ]

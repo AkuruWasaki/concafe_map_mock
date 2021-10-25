@@ -24,37 +24,52 @@ import (
 
 // Shop is an object representing the database table.
 type Shop struct {
-	ID      int         `boil:"id" json:"id" toml:"id" yaml:"id"`
-	Name    string      `boil:"name" json:"name" toml:"name" yaml:"name"`
-	Address string      `boil:"address" json:"address" toml:"address" yaml:"address"`
-	Content null.String `boil:"content" json:"content,omitempty" toml:"content" yaml:"content,omitempty"`
+	ID        int         `boil:"id" json:"id" toml:"id" yaml:"id"`
+	Name      string      `boil:"name" json:"name" toml:"name" yaml:"name"`
+	Address   null.String `boil:"address" json:"address,omitempty" toml:"address" yaml:"address,omitempty"`
+	Tel       null.String `boil:"tel" json:"tel,omitempty" toml:"tel" yaml:"tel,omitempty"`
+	Content   null.String `boil:"content" json:"content,omitempty" toml:"content" yaml:"content,omitempty"`
+	CreatedAt time.Time   `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
+	UpdatedAt time.Time   `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
 
 	R *shopR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L shopL  `boil:"-" json:"-" toml:"-" yaml:"-"`
 }
 
 var ShopColumns = struct {
-	ID      string
-	Name    string
-	Address string
-	Content string
+	ID        string
+	Name      string
+	Address   string
+	Tel       string
+	Content   string
+	CreatedAt string
+	UpdatedAt string
 }{
-	ID:      "id",
-	Name:    "name",
-	Address: "address",
-	Content: "content",
+	ID:        "id",
+	Name:      "name",
+	Address:   "address",
+	Tel:       "tel",
+	Content:   "content",
+	CreatedAt: "created_at",
+	UpdatedAt: "updated_at",
 }
 
 var ShopTableColumns = struct {
-	ID      string
-	Name    string
-	Address string
-	Content string
+	ID        string
+	Name      string
+	Address   string
+	Tel       string
+	Content   string
+	CreatedAt string
+	UpdatedAt string
 }{
-	ID:      "shops.id",
-	Name:    "shops.name",
-	Address: "shops.address",
-	Content: "shops.content",
+	ID:        "shops.id",
+	Name:      "shops.name",
+	Address:   "shops.address",
+	Tel:       "shops.tel",
+	Content:   "shops.content",
+	CreatedAt: "shops.created_at",
+	UpdatedAt: "shops.updated_at",
 }
 
 // Generated where
@@ -129,16 +144,43 @@ func (w whereHelpernull_String) GTE(x null.String) qm.QueryMod {
 func (w whereHelpernull_String) IsNull() qm.QueryMod    { return qmhelper.WhereIsNull(w.field) }
 func (w whereHelpernull_String) IsNotNull() qm.QueryMod { return qmhelper.WhereIsNotNull(w.field) }
 
+type whereHelpertime_Time struct{ field string }
+
+func (w whereHelpertime_Time) EQ(x time.Time) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.EQ, x)
+}
+func (w whereHelpertime_Time) NEQ(x time.Time) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.NEQ, x)
+}
+func (w whereHelpertime_Time) LT(x time.Time) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.LT, x)
+}
+func (w whereHelpertime_Time) LTE(x time.Time) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.LTE, x)
+}
+func (w whereHelpertime_Time) GT(x time.Time) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.GT, x)
+}
+func (w whereHelpertime_Time) GTE(x time.Time) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.GTE, x)
+}
+
 var ShopWhere = struct {
-	ID      whereHelperint
-	Name    whereHelperstring
-	Address whereHelperstring
-	Content whereHelpernull_String
+	ID        whereHelperint
+	Name      whereHelperstring
+	Address   whereHelpernull_String
+	Tel       whereHelpernull_String
+	Content   whereHelpernull_String
+	CreatedAt whereHelpertime_Time
+	UpdatedAt whereHelpertime_Time
 }{
-	ID:      whereHelperint{field: "`shops`.`id`"},
-	Name:    whereHelperstring{field: "`shops`.`name`"},
-	Address: whereHelperstring{field: "`shops`.`address`"},
-	Content: whereHelpernull_String{field: "`shops`.`content`"},
+	ID:        whereHelperint{field: "`shops`.`id`"},
+	Name:      whereHelperstring{field: "`shops`.`name`"},
+	Address:   whereHelpernull_String{field: "`shops`.`address`"},
+	Tel:       whereHelpernull_String{field: "`shops`.`tel`"},
+	Content:   whereHelpernull_String{field: "`shops`.`content`"},
+	CreatedAt: whereHelpertime_Time{field: "`shops`.`created_at`"},
+	UpdatedAt: whereHelpertime_Time{field: "`shops`.`updated_at`"},
 }
 
 // ShopRels is where relationship names are stored.
@@ -158,8 +200,8 @@ func (*shopR) NewStruct() *shopR {
 type shopL struct{}
 
 var (
-	shopAllColumns            = []string{"id", "name", "address", "content"}
-	shopColumnsWithoutDefault = []string{"id", "name", "address", "content"}
+	shopAllColumns            = []string{"id", "name", "address", "tel", "content", "created_at", "updated_at"}
+	shopColumnsWithoutDefault = []string{"id", "name", "address", "tel", "content", "created_at", "updated_at"}
 	shopColumnsWithDefault    = []string{}
 	shopPrimaryKeyColumns     = []string{"id"}
 )
@@ -483,6 +525,16 @@ func (o *Shop) Insert(ctx context.Context, exec boil.ContextExecutor, columns bo
 	}
 
 	var err error
+	if !boil.TimestampsAreSkipped(ctx) {
+		currTime := time.Now().In(boil.GetLocation())
+
+		if o.CreatedAt.IsZero() {
+			o.CreatedAt = currTime
+		}
+		if o.UpdatedAt.IsZero() {
+			o.UpdatedAt = currTime
+		}
+	}
 
 	if err := o.doBeforeInsertHooks(ctx, exec); err != nil {
 		return err
@@ -574,6 +626,12 @@ CacheNoHooks:
 // See boil.Columns.UpdateColumnSet documentation to understand column list inference for updates.
 // Update does not automatically update the record in case of default values. Use .Reload() to refresh the records.
 func (o *Shop) Update(ctx context.Context, exec boil.ContextExecutor, columns boil.Columns) (int64, error) {
+	if !boil.TimestampsAreSkipped(ctx) {
+		currTime := time.Now().In(boil.GetLocation())
+
+		o.UpdatedAt = currTime
+	}
+
 	var err error
 	if err = o.doBeforeUpdateHooks(ctx, exec); err != nil {
 		return 0, err
@@ -707,6 +765,14 @@ var mySQLShopUniqueColumns = []string{
 func (o *Shop) Upsert(ctx context.Context, exec boil.ContextExecutor, updateColumns, insertColumns boil.Columns) error {
 	if o == nil {
 		return errors.New("models: no shops provided for upsert")
+	}
+	if !boil.TimestampsAreSkipped(ctx) {
+		currTime := time.Now().In(boil.GetLocation())
+
+		if o.CreatedAt.IsZero() {
+			o.CreatedAt = currTime
+		}
+		o.UpdatedAt = currTime
 	}
 
 	if err := o.doBeforeUpsertHooks(ctx, exec); err != nil {

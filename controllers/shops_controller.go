@@ -29,9 +29,11 @@ func (sc ShopsController) Create(c *gin.Context) {
 	db := db.Connect()
 	var shop models.Shop
 
-	// WIP: set param
+	// // WIP: set param
 	shop.Name = c.Param("name")
 	shop.Address = c.Param("address")
+	shop.Tel = c.Param("tel")
+	shop.Content = c.Param("content")
 
 	shop.Insert(c, db, boil.Infer())
 }
