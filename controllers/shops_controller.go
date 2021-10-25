@@ -11,15 +11,6 @@ import (
 // Controller is shops controller
 type ShopsController struct{}
 
-// WIP
-// shops_controller
-// 店舗一覧
-// func ShopIndex(c *gin.Context) {
-// 	db := db.Connect()
-// 	shops := models.Shops()
-// 	c.JSON(200, shops)
-// }
-
 // Index action: GET /shops
 func (sc ShopsController) Index(c *gin.Context) {
 	db := db.Connect()
