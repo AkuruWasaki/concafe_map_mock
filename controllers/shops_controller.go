@@ -4,6 +4,7 @@ import (
 	"github.com/akuruwasaki/concafe_map_mock/db"
 	"github.com/akuruwasaki/concafe_map_mock/models"
 	"github.com/gin-gonic/gin"
+	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 	"net/http"
 )
@@ -21,4 +22,16 @@ func (sc ShopsController) Index(c *gin.Context) {
 	} else {
 		c.JSON(200, shops)
 	}
+}
+
+// Create action: POST /shops
+func (sc ShopsController) Create(c *gin.Context) {
+	db := db.Connect()
+	var shop models.Shop
+
+	// WIP: set param
+	shop.Name = c.Param("name")
+	shop.Address = c.Param("address")
+
+	shop.Insert(c, db, boil.Infer())
 }
