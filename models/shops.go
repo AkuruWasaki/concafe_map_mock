@@ -201,8 +201,8 @@ type shopL struct{}
 
 var (
 	shopAllColumns            = []string{"id", "name", "address", "tel", "content", "created_at", "updated_at"}
-	shopColumnsWithoutDefault = []string{"id", "name", "address", "tel", "content", "created_at", "updated_at"}
-	shopColumnsWithDefault    = []string{}
+	shopColumnsWithoutDefault = []string{"name", "address", "tel", "content", "created_at", "updated_at"}
+	shopColumnsWithDefault    = []string{"id"}
 	shopPrimaryKeyColumns     = []string{"id"}
 )
 
@@ -586,15 +586,26 @@ func (o *Shop) Insert(ctx context.Context, exec boil.ContextExecutor, columns bo
 		fmt.Fprintln(writer, cache.query)
 		fmt.Fprintln(writer, vals)
 	}
-	_, err = exec.ExecContext(ctx, cache.query, vals...)
+	result, err := exec.ExecContext(ctx, cache.query, vals...)
 
 	if err != nil {
 		return errors.Wrap(err, "models: unable to insert into shops")
 	}
 
+	var lastID int64
 	var identifierCols []interface{}
 
 	if len(cache.retMapping) == 0 {
+		goto CacheNoHooks
+	}
+
+	lastID, err = result.LastInsertId()
+	if err != nil {
+		return ErrSyncFail
+	}
+
+	o.ID = int(lastID)
+	if lastID != 0 && len(cache.retMapping) == 1 && cache.retMapping[0] == shopMapping["id"] {
 		goto CacheNoHooks
 	}
 
@@ -862,16 +873,27 @@ func (o *Shop) Upsert(ctx context.Context, exec boil.ContextExecutor, updateColu
 		fmt.Fprintln(writer, cache.query)
 		fmt.Fprintln(writer, vals)
 	}
-	_, err = exec.ExecContext(ctx, cache.query, vals...)
+	result, err := exec.ExecContext(ctx, cache.query, vals...)
 
 	if err != nil {
 		return errors.Wrap(err, "models: unable to upsert for shops")
 	}
 
+	var lastID int64
 	var uniqueMap []uint64
 	var nzUniqueCols []interface{}
 
 	if len(cache.retMapping) == 0 {
+		goto CacheNoHooks
+	}
+
+	lastID, err = result.LastInsertId()
+	if err != nil {
+		return ErrSyncFail
+	}
+
+	o.ID = int(lastID)
+	if lastID != 0 && len(cache.retMapping) == 1 && cache.retMapping[0] == shopMapping["id"] {
 		goto CacheNoHooks
 	}
 

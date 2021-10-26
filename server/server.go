@@ -18,6 +18,7 @@ func GetRouter() *gin.Engine {
 	{
 		ctrl := controllers.ShopsController{}
 		s.GET("", ctrl.Index)
+		s.POST("", ctrl.Create)
 	}
 
 	return r
