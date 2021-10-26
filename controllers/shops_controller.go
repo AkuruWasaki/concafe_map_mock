@@ -58,7 +58,7 @@ func (sc ShopsController) Update(c *gin.Context) {
 	shop, err := models.FindShop(c, db, idInt)
 	if err != nil {
 		c.AbortWithStatus(400)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"not found shop": err.Error()})
 	}
 
 	// set param
@@ -71,6 +71,33 @@ func (sc ShopsController) Update(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatus(400)
 		c.JSON(http.StatusBadRequest, gin.H{"update failed": err.Error()})
+	} else {
+		c.JSON(200, shop)
+	}
+}
+
+// Delete action: DELETE /shops/:id
+func (sc ShopsController) Delete(c *gin.Context) {
+	db := db.Connect()
+
+	// パスからID取得
+	id := c.Param("id")
+	// idをint型に変換
+	idInt, _ := strconv.Atoi(id)
+
+	// find shop data
+	shop, err := models.FindShop(c, db, idInt)
+	if err != nil {
+		c.AbortWithStatus(400)
+		c.JSON(http.StatusBadRequest, gin.H{"not found shop": err.Error()})
+	}
+
+	// delete shop
+	_, err = shop.Delete(c, db)
+
+	if err != nil {
+		c.AbortWithStatus(400)
+		c.JSON(http.StatusBadRequest, gin.H{"delete failed": err.Error()})
 	} else {
 		c.JSON(200, shop)
 	}

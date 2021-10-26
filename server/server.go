@@ -20,6 +20,7 @@ func GetRouter() *gin.Engine {
 		s.GET("", ctrl.Index)
 		s.POST("", ctrl.Create)
 		s.PUT("/:id", ctrl.Update)
+		s.DELETE("/:id", ctrl.Delete)
 	}
 
 	return r
