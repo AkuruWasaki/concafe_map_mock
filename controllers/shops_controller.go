@@ -8,7 +8,6 @@ import (
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 	"net/http"
-	"time"
 )
 
 // Controller is shops controller
@@ -31,16 +30,16 @@ func (sc ShopsController) Create(c *gin.Context) {
 	db := db.Connect()
 	var shop models.Shop
 
-	// WIP: set param
-	shop.Name = c.Param("name")
-	shop.Address = null.StringFrom(c.Param("address"))
-	shop.Tel = null.StringFrom(c.Param("tel"))
-	shop.Content = null.StringFrom(c.Param("content"))
-	shop.CreatedAt = time.Now()
-	shop.UpdatedAt = time.Now()
+	// set param
+	shop.Name = c.Query("name")
+	shop.Address = null.StringFrom(c.Query("address"))
+	shop.Tel = null.StringFrom(c.Query("tel"))
+	shop.Content = null.StringFrom(c.Query("content"))
 
 	if err := shop.Insert(c, db, boil.Infer()); err != nil {
 		c.AbortWithStatus(400)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	} else {
+		c.JSON(201, shop)
 	}
 }
