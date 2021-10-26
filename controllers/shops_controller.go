@@ -8,6 +8,7 @@ import (
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 	"net/http"
+	"strconv"
 )
 
 // Controller is shops controller
@@ -41,5 +42,36 @@ func (sc ShopsController) Create(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	} else {
 		c.JSON(201, shop)
+	}
+}
+
+// Update action: PUT /shops/:id
+func (sc ShopsController) Update(c *gin.Context) {
+	db := db.Connect()
+
+	// パスからID取得
+	id := c.Param("id")
+	// idをint型に変換
+	idInt, _ := strconv.Atoi(id)
+
+	// find shop data
+	shop, err := models.FindShop(c, db, idInt)
+	if err != nil {
+		c.AbortWithStatus(400)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+
+	// set param
+	shop.Name = c.Query("name")
+	shop.Address = null.StringFrom(c.Query("address"))
+	shop.Tel = null.StringFrom(c.Query("tel"))
+	shop.Content = null.StringFrom(c.Query("content"))
+
+	_, err = shop.Update(c, db, boil.Infer())
+	if err != nil {
+		c.AbortWithStatus(400)
+		c.JSON(http.StatusBadRequest, gin.H{"update failed": err.Error()})
+	} else {
+		c.JSON(200, shop)
 	}
 }
