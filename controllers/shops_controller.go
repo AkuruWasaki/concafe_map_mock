@@ -80,7 +80,7 @@ func (sc ShopsController) Update(c *gin.Context) {
 		c.AbortWithStatus(400)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	} else {
-		c.JSON(200, shop)
+		c.JSON(200, gin.H{"success": "ID: " + id + "の店舗情報を更新しました"})
 	}
 }
 
@@ -108,6 +108,6 @@ func (sc ShopsController) Delete(c *gin.Context) {
 		c.AbortWithStatus(400)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	} else {
-		c.JSON(200, shop)
+		c.JSON(200, gin.H{"success": "ID: " + id + "の店舗情報を削除しました"})
 	}
 }
