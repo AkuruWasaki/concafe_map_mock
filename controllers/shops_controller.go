@@ -56,9 +56,17 @@ func (sc ShopsController) Update(c *gin.Context) {
 
 	// find shop data
 	shop, err := models.FindShop(c, db, idInt)
+	// ToDo: c.AbortWithStatus(400)の部分をうまいこと共通化したい
+	if shop == nil {
+		c.AbortWithStatus(400)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "shop not found"})
+		return
+	}
+
 	if err != nil {
 		c.AbortWithStatus(400)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 
 	// set param
@@ -90,6 +98,7 @@ func (sc ShopsController) Delete(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatus(400)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 
 	// delete shop
