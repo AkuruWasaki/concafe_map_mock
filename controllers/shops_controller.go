@@ -58,7 +58,7 @@ func (sc ShopsController) Update(c *gin.Context) {
 	shop, err := models.FindShop(c, db, idInt)
 	if err != nil {
 		c.AbortWithStatus(400)
-		c.JSON(http.StatusBadRequest, gin.H{"not found shop": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
 	// set param
@@ -70,7 +70,7 @@ func (sc ShopsController) Update(c *gin.Context) {
 	_, err = shop.Update(c, db, boil.Infer())
 	if err != nil {
 		c.AbortWithStatus(400)
-		c.JSON(http.StatusBadRequest, gin.H{"update failed": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	} else {
 		c.JSON(200, shop)
 	}
@@ -89,7 +89,7 @@ func (sc ShopsController) Delete(c *gin.Context) {
 	shop, err := models.FindShop(c, db, idInt)
 	if err != nil {
 		c.AbortWithStatus(400)
-		c.JSON(http.StatusBadRequest, gin.H{"not found shop": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
 	// delete shop
@@ -97,7 +97,7 @@ func (sc ShopsController) Delete(c *gin.Context) {
 
 	if err != nil {
 		c.AbortWithStatus(400)
-		c.JSON(http.StatusBadRequest, gin.H{"delete failed": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	} else {
 		c.JSON(200, shop)
 	}
