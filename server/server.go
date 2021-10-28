@@ -23,5 +23,14 @@ func GetRouter() *gin.Engine {
 		s.DELETE("/:id", ctrl.Delete)
 	}
 
+	stf := r.Group("/staffs")
+	{
+		ctrl := controllers.StaffsController{}
+		stf.GET("", ctrl.Index)
+		stf.POST("", ctrl.Create)
+		stf.PUT("/:id", ctrl.Update)
+		stf.DELETE("/:id", ctrl.Delete)
+	}
+
 	return r
 }

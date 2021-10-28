@@ -185,10 +185,14 @@ var ShopWhere = struct {
 
 // ShopRels is where relationship names are stored.
 var ShopRels = struct {
-}{}
+	Staffs string
+}{
+	Staffs: "Staffs",
+}
 
 // shopR is where relationships are stored.
 type shopR struct {
+	Staffs StaffSlice `boil:"Staffs" json:"Staffs" toml:"Staffs" yaml:"Staffs"`
 }
 
 // NewStruct creates a new relationship struct
@@ -479,6 +483,178 @@ func (q shopQuery) Exists(ctx context.Context, exec boil.ContextExecutor) (bool,
 	}
 
 	return count > 0, nil
+}
+
+// Staffs retrieves all the staff's Staffs with an executor.
+func (o *Shop) Staffs(mods ...qm.QueryMod) staffQuery {
+	var queryMods []qm.QueryMod
+	if len(mods) != 0 {
+		queryMods = append(queryMods, mods...)
+	}
+
+	queryMods = append(queryMods,
+		qm.Where("`staffs`.`shop_id`=?", o.ID),
+	)
+
+	query := Staffs(queryMods...)
+	queries.SetFrom(query.Query, "`staffs`")
+
+	if len(queries.GetSelect(query.Query)) == 0 {
+		queries.SetSelect(query.Query, []string{"`staffs`.*"})
+	}
+
+	return query
+}
+
+// LoadStaffs allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for a 1-M or N-M relationship.
+func (shopL) LoadStaffs(ctx context.Context, e boil.ContextExecutor, singular bool, maybeShop interface{}, mods queries.Applicator) error {
+	var slice []*Shop
+	var object *Shop
+
+	if singular {
+		object = maybeShop.(*Shop)
+	} else {
+		slice = *maybeShop.(*[]*Shop)
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &shopR{}
+		}
+		args = append(args, object.ID)
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &shopR{}
+			}
+
+			for _, a := range args {
+				if a == obj.ID {
+					continue Outer
+				}
+			}
+
+			args = append(args, obj.ID)
+		}
+	}
+
+	if len(args) == 0 {
+		return nil
+	}
+
+	query := NewQuery(
+		qm.From(`staffs`),
+		qm.WhereIn(`staffs.shop_id in ?`, args...),
+	)
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load staffs")
+	}
+
+	var resultSlice []*Staff
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice staffs")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results in eager load on staffs")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for staffs")
+	}
+
+	if len(staffAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+	if singular {
+		object.R.Staffs = resultSlice
+		for _, foreign := range resultSlice {
+			if foreign.R == nil {
+				foreign.R = &staffR{}
+			}
+			foreign.R.Shop = object
+		}
+		return nil
+	}
+
+	for _, foreign := range resultSlice {
+		for _, local := range slice {
+			if local.ID == foreign.ShopID {
+				local.R.Staffs = append(local.R.Staffs, foreign)
+				if foreign.R == nil {
+					foreign.R = &staffR{}
+				}
+				foreign.R.Shop = local
+				break
+			}
+		}
+	}
+
+	return nil
+}
+
+// AddStaffs adds the given related objects to the existing relationships
+// of the shop, optionally inserting them as new records.
+// Appends related to o.R.Staffs.
+// Sets related.R.Shop appropriately.
+func (o *Shop) AddStaffs(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Staff) error {
+	var err error
+	for _, rel := range related {
+		if insert {
+			rel.ShopID = o.ID
+			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
+				return errors.Wrap(err, "failed to insert into foreign table")
+			}
+		} else {
+			updateQuery := fmt.Sprintf(
+				"UPDATE `staffs` SET %s WHERE %s",
+				strmangle.SetParamNames("`", "`", 0, []string{"shop_id"}),
+				strmangle.WhereClause("`", "`", 0, staffPrimaryKeyColumns),
+			)
+			values := []interface{}{o.ID, rel.ID}
+
+			if boil.IsDebug(ctx) {
+				writer := boil.DebugWriterFrom(ctx)
+				fmt.Fprintln(writer, updateQuery)
+				fmt.Fprintln(writer, values)
+			}
+			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+				return errors.Wrap(err, "failed to update foreign table")
+			}
+
+			rel.ShopID = o.ID
+		}
+	}
+
+	if o.R == nil {
+		o.R = &shopR{
+			Staffs: related,
+		}
+	} else {
+		o.R.Staffs = append(o.R.Staffs, related...)
+	}
+
+	for _, rel := range related {
+		if rel.R == nil {
+			rel.R = &staffR{
+				Shop: o,
+			}
+		} else {
+			rel.R.Shop = o
+		}
+	}
+	return nil
 }
 
 // Shops retrieves all the records using an executor.

@@ -11,37 +11,38 @@ import (
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 )
 
-// Controller is shops controller
-type ShopsController struct{}
+// Controller is staffs controller
+type StaffsController struct{}
 
-// Index action: GET /shops
-func (sc ShopsController) Index(c *gin.Context) {
+// Index action: GET /staffs
+func (sc StaffsController) Index(c *gin.Context) {
 	db := db.Connect()
-	shops, err := models.Shops(qm.Limit(5)).All(c, db)
+	staffs, err := models.Staffs(qm.Limit(5)).All(c, db)
 	if err != nil {
 		c.AbortWithStatus(400)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	} else {
+		c.JSON(200, staffs)
 	}
-	c.JSON(200, shops)
 }
 
-// Create action: POST /shops
-func (sc ShopsController) Create(c *gin.Context) {
+// Create action: POST /staffs
+func (sc StaffsController) Create(c *gin.Context) {
 	db := db.Connect()
-	var shop models.Shop
+	var staff models.Staff
 
-	// set param
-	c.BindJSON(&shop)
+	c.BindJSON(&staff)
 
-	if err := shop.Insert(c, db, boil.Infer()); err != nil {
+	if err := staff.Insert(c, db, boil.Infer()); err != nil {
 		c.AbortWithStatus(400)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
-	c.JSON(201, shop)
+	c.JSON(201, staff)
 }
 
-// Update action: PUT /shops/:id
-func (sc ShopsController) Update(c *gin.Context) {
+// Update action: PUT /staffs/:id
+func (sc StaffsController) Update(c *gin.Context) {
 	db := db.Connect()
 
 	// パスからID取得
@@ -49,12 +50,12 @@ func (sc ShopsController) Update(c *gin.Context) {
 	// idをint型に変換
 	idInt, _ := strconv.Atoi(id)
 
-	// find shop data
-	shop, err := models.FindShop(c, db, idInt)
+	// find staff data
+	staff, err := models.FindStaff(c, db, idInt)
 	// ToDo: c.AbortWithStatus(400)の部分をうまいこと共通化したい
-	if shop == nil {
+	if staff == nil {
 		c.AbortWithStatus(400)
-		c.JSON(http.StatusBadRequest, gin.H{"error": "shop not found"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "staff not found"})
 		return
 	}
 
@@ -65,18 +66,18 @@ func (sc ShopsController) Update(c *gin.Context) {
 	}
 
 	// set param
-	c.BindJSON(&shop)
+	c.BindJSON(&staff)
 
-	_, err = shop.Update(c, db, boil.Infer())
+	_, err = staff.Update(c, db, boil.Infer())
 	if err != nil {
 		c.AbortWithStatus(400)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
-	c.JSON(200, gin.H{"success": "ID: " + id + "の店舗情報を更新しました"})
+	c.JSON(200, gin.H{"success": "ID: " + id + "のスタッフ情報を更新しました"})
 }
 
-// Delete action: DELETE /shops/:id
-func (sc ShopsController) Delete(c *gin.Context) {
+// Delete action: DELETE /staffs/:id
+func (sc StaffsController) Delete(c *gin.Context) {
 	db := db.Connect()
 
 	// パスからID取得
@@ -84,20 +85,20 @@ func (sc ShopsController) Delete(c *gin.Context) {
 	// idをint型に変換
 	idInt, _ := strconv.Atoi(id)
 
-	// find shop data
-	shop, err := models.FindShop(c, db, idInt)
+	// find staff data
+	staff, err := models.FindStaff(c, db, idInt)
 	if err != nil {
 		c.AbortWithStatus(400)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	// delete shop
-	_, err = shop.Delete(c, db)
+	// delete staff
+	_, err = staff.Delete(c, db)
 
 	if err != nil {
 		c.AbortWithStatus(400)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
-	c.JSON(200, gin.H{"success": "ID: " + id + "の店舗情報を削除しました"})
+	c.JSON(200, gin.H{"success": "ID: " + id + "のスタッフ情報を削除しました"})
 }
