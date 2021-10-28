@@ -21,9 +21,8 @@ func (sc StaffsController) Index(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatus(400)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	} else {
-		c.JSON(200, staffs)
 	}
+	c.JSON(200, staffs)
 }
 
 // Create action: POST /staffs
