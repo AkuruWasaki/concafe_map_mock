@@ -37,6 +37,7 @@ func (sc ShopsController) Create(c *gin.Context) {
 
 	// set param
 	if err := c.BindJSON(&shop); err != nil {
+		c.AbortWithStatus(400)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
