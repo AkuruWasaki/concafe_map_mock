@@ -14,6 +14,11 @@ import (
 // Controller is shops controller
 type ShopsController struct{}
 
+type Shop struct {
+	Shop       models.Shop `json:"shop"`
+	ShopGenres []int       `json:"shop_genre_ids"`
+}
+
 // Index action: GET /shops
 func (sc ShopsController) Index(c *gin.Context) {
 	db := db.Connect()
@@ -28,15 +33,32 @@ func (sc ShopsController) Index(c *gin.Context) {
 // Create action: POST /shops
 func (sc ShopsController) Create(c *gin.Context) {
 	db := db.Connect()
-	var shop models.Shop
+	var shop Shop
 
 	// set param
-	c.BindJSON(&shop)
+	if err := c.BindJSON(&shop); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
-	if err := shop.Insert(c, db, boil.Infer()); err != nil {
+	if err := shop.Shop.Insert(c, db, boil.Infer()); err != nil {
 		c.AbortWithStatus(400)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
+
+	for _, genre_id := range shop.ShopGenres {
+		var shop_genre_relation models.ShopGenreRelation
+		shop_genre_relation.ShopGenreID = genre_id
+		shop_genre_relation.ShopID = shop.Shop.ID
+		// insert
+		if err := shop_genre_relation.Insert(c, db, boil.Infer()); err != nil {
+			c.AbortWithStatus(400)
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+	}
+
 	c.JSON(201, shop)
 }
 

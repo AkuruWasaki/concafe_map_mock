@@ -7,5 +7,7 @@
   sslmode    = "false"
   whitelist = [
     "shops",
-    "staffs"
+    "staffs",
+    "shop_genres",
+    "shop_genre_relations"
   ]

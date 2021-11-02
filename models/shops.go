@@ -74,52 +74,6 @@ var ShopTableColumns = struct {
 
 // Generated where
 
-type whereHelperint struct{ field string }
-
-func (w whereHelperint) EQ(x int) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.EQ, x) }
-func (w whereHelperint) NEQ(x int) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.NEQ, x) }
-func (w whereHelperint) LT(x int) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.LT, x) }
-func (w whereHelperint) LTE(x int) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.LTE, x) }
-func (w whereHelperint) GT(x int) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.GT, x) }
-func (w whereHelperint) GTE(x int) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.GTE, x) }
-func (w whereHelperint) IN(slice []int) qm.QueryMod {
-	values := make([]interface{}, 0, len(slice))
-	for _, value := range slice {
-		values = append(values, value)
-	}
-	return qm.WhereIn(fmt.Sprintf("%s IN ?", w.field), values...)
-}
-func (w whereHelperint) NIN(slice []int) qm.QueryMod {
-	values := make([]interface{}, 0, len(slice))
-	for _, value := range slice {
-		values = append(values, value)
-	}
-	return qm.WhereNotIn(fmt.Sprintf("%s NOT IN ?", w.field), values...)
-}
-
-type whereHelperstring struct{ field string }
-
-func (w whereHelperstring) EQ(x string) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.EQ, x) }
-func (w whereHelperstring) NEQ(x string) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.NEQ, x) }
-func (w whereHelperstring) LT(x string) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.LT, x) }
-func (w whereHelperstring) LTE(x string) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.LTE, x) }
-func (w whereHelperstring) GT(x string) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.GT, x) }
-func (w whereHelperstring) GTE(x string) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.GTE, x) }
-func (w whereHelperstring) IN(slice []string) qm.QueryMod {
-	values := make([]interface{}, 0, len(slice))
-	for _, value := range slice {
-		values = append(values, value)
-	}
-	return qm.WhereIn(fmt.Sprintf("%s IN ?", w.field), values...)
-}
-func (w whereHelperstring) NIN(slice []string) qm.QueryMod {
-	values := make([]interface{}, 0, len(slice))
-	for _, value := range slice {
-		values = append(values, value)
-	}
-	return qm.WhereNotIn(fmt.Sprintf("%s NOT IN ?", w.field), values...)
-}
-
 type whereHelpernull_String struct{ field string }
 
 func (w whereHelpernull_String) EQ(x null.String) qm.QueryMod {
@@ -185,14 +139,17 @@ var ShopWhere = struct {
 
 // ShopRels is where relationship names are stored.
 var ShopRels = struct {
-	Staffs string
+	ShopGenreRelations string
+	Staffs             string
 }{
-	Staffs: "Staffs",
+	ShopGenreRelations: "ShopGenreRelations",
+	Staffs:             "Staffs",
 }
 
 // shopR is where relationships are stored.
 type shopR struct {
-	Staffs StaffSlice `boil:"Staffs" json:"Staffs" toml:"Staffs" yaml:"Staffs"`
+	ShopGenreRelations ShopGenreRelationSlice `boil:"ShopGenreRelations" json:"ShopGenreRelations" toml:"ShopGenreRelations" yaml:"ShopGenreRelations"`
+	Staffs             StaffSlice             `boil:"Staffs" json:"Staffs" toml:"Staffs" yaml:"Staffs"`
 }
 
 // NewStruct creates a new relationship struct
@@ -485,6 +442,27 @@ func (q shopQuery) Exists(ctx context.Context, exec boil.ContextExecutor) (bool,
 	return count > 0, nil
 }
 
+// ShopGenreRelations retrieves all the shop_genre_relation's ShopGenreRelations with an executor.
+func (o *Shop) ShopGenreRelations(mods ...qm.QueryMod) shopGenreRelationQuery {
+	var queryMods []qm.QueryMod
+	if len(mods) != 0 {
+		queryMods = append(queryMods, mods...)
+	}
+
+	queryMods = append(queryMods,
+		qm.Where("`shop_genre_relations`.`shop_id`=?", o.ID),
+	)
+
+	query := ShopGenreRelations(queryMods...)
+	queries.SetFrom(query.Query, "`shop_genre_relations`")
+
+	if len(queries.GetSelect(query.Query)) == 0 {
+		queries.SetSelect(query.Query, []string{"`shop_genre_relations`.*"})
+	}
+
+	return query
+}
+
 // Staffs retrieves all the staff's Staffs with an executor.
 func (o *Shop) Staffs(mods ...qm.QueryMod) staffQuery {
 	var queryMods []qm.QueryMod
@@ -504,6 +482,104 @@ func (o *Shop) Staffs(mods ...qm.QueryMod) staffQuery {
 	}
 
 	return query
+}
+
+// LoadShopGenreRelations allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for a 1-M or N-M relationship.
+func (shopL) LoadShopGenreRelations(ctx context.Context, e boil.ContextExecutor, singular bool, maybeShop interface{}, mods queries.Applicator) error {
+	var slice []*Shop
+	var object *Shop
+
+	if singular {
+		object = maybeShop.(*Shop)
+	} else {
+		slice = *maybeShop.(*[]*Shop)
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &shopR{}
+		}
+		args = append(args, object.ID)
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &shopR{}
+			}
+
+			for _, a := range args {
+				if a == obj.ID {
+					continue Outer
+				}
+			}
+
+			args = append(args, obj.ID)
+		}
+	}
+
+	if len(args) == 0 {
+		return nil
+	}
+
+	query := NewQuery(
+		qm.From(`shop_genre_relations`),
+		qm.WhereIn(`shop_genre_relations.shop_id in ?`, args...),
+	)
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load shop_genre_relations")
+	}
+
+	var resultSlice []*ShopGenreRelation
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice shop_genre_relations")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results in eager load on shop_genre_relations")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for shop_genre_relations")
+	}
+
+	if len(shopGenreRelationAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+	if singular {
+		object.R.ShopGenreRelations = resultSlice
+		for _, foreign := range resultSlice {
+			if foreign.R == nil {
+				foreign.R = &shopGenreRelationR{}
+			}
+			foreign.R.Shop = object
+		}
+		return nil
+	}
+
+	for _, foreign := range resultSlice {
+		for _, local := range slice {
+			if local.ID == foreign.ShopID {
+				local.R.ShopGenreRelations = append(local.R.ShopGenreRelations, foreign)
+				if foreign.R == nil {
+					foreign.R = &shopGenreRelationR{}
+				}
+				foreign.R.Shop = local
+				break
+			}
+		}
+	}
+
+	return nil
 }
 
 // LoadStaffs allows an eager lookup of values, cached into the
@@ -601,6 +677,59 @@ func (shopL) LoadStaffs(ctx context.Context, e boil.ContextExecutor, singular bo
 		}
 	}
 
+	return nil
+}
+
+// AddShopGenreRelations adds the given related objects to the existing relationships
+// of the shop, optionally inserting them as new records.
+// Appends related to o.R.ShopGenreRelations.
+// Sets related.R.Shop appropriately.
+func (o *Shop) AddShopGenreRelations(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*ShopGenreRelation) error {
+	var err error
+	for _, rel := range related {
+		if insert {
+			rel.ShopID = o.ID
+			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
+				return errors.Wrap(err, "failed to insert into foreign table")
+			}
+		} else {
+			updateQuery := fmt.Sprintf(
+				"UPDATE `shop_genre_relations` SET %s WHERE %s",
+				strmangle.SetParamNames("`", "`", 0, []string{"shop_id"}),
+				strmangle.WhereClause("`", "`", 0, shopGenreRelationPrimaryKeyColumns),
+			)
+			values := []interface{}{o.ID, rel.ID}
+
+			if boil.IsDebug(ctx) {
+				writer := boil.DebugWriterFrom(ctx)
+				fmt.Fprintln(writer, updateQuery)
+				fmt.Fprintln(writer, values)
+			}
+			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+				return errors.Wrap(err, "failed to update foreign table")
+			}
+
+			rel.ShopID = o.ID
+		}
+	}
+
+	if o.R == nil {
+		o.R = &shopR{
+			ShopGenreRelations: related,
+		}
+	} else {
+		o.R.ShopGenreRelations = append(o.R.ShopGenreRelations, related...)
+	}
+
+	for _, rel := range related {
+		if rel.R == nil {
+			rel.R = &shopGenreRelationR{
+				Shop: o,
+			}
+		} else {
+			rel.R.Shop = o
+		}
+	}
 	return nil
 }
 

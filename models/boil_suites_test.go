@@ -12,61 +12,87 @@ import "testing"
 // It does NOT run each operation group in parallel.
 // Separating the tests thusly grants avoidance of Postgres deadlocks.
 func TestParent(t *testing.T) {
+	t.Run("ShopGenreRelations", testShopGenreRelations)
+	t.Run("ShopGenres", testShopGenres)
 	t.Run("Shops", testShops)
 	t.Run("Staffs", testStaffs)
 }
 
 func TestDelete(t *testing.T) {
+	t.Run("ShopGenreRelations", testShopGenreRelationsDelete)
+	t.Run("ShopGenres", testShopGenresDelete)
 	t.Run("Shops", testShopsDelete)
 	t.Run("Staffs", testStaffsDelete)
 }
 
 func TestQueryDeleteAll(t *testing.T) {
+	t.Run("ShopGenreRelations", testShopGenreRelationsQueryDeleteAll)
+	t.Run("ShopGenres", testShopGenresQueryDeleteAll)
 	t.Run("Shops", testShopsQueryDeleteAll)
 	t.Run("Staffs", testStaffsQueryDeleteAll)
 }
 
 func TestSliceDeleteAll(t *testing.T) {
+	t.Run("ShopGenreRelations", testShopGenreRelationsSliceDeleteAll)
+	t.Run("ShopGenres", testShopGenresSliceDeleteAll)
 	t.Run("Shops", testShopsSliceDeleteAll)
 	t.Run("Staffs", testStaffsSliceDeleteAll)
 }
 
 func TestExists(t *testing.T) {
+	t.Run("ShopGenreRelations", testShopGenreRelationsExists)
+	t.Run("ShopGenres", testShopGenresExists)
 	t.Run("Shops", testShopsExists)
 	t.Run("Staffs", testStaffsExists)
 }
 
 func TestFind(t *testing.T) {
+	t.Run("ShopGenreRelations", testShopGenreRelationsFind)
+	t.Run("ShopGenres", testShopGenresFind)
 	t.Run("Shops", testShopsFind)
 	t.Run("Staffs", testStaffsFind)
 }
 
 func TestBind(t *testing.T) {
+	t.Run("ShopGenreRelations", testShopGenreRelationsBind)
+	t.Run("ShopGenres", testShopGenresBind)
 	t.Run("Shops", testShopsBind)
 	t.Run("Staffs", testStaffsBind)
 }
 
 func TestOne(t *testing.T) {
+	t.Run("ShopGenreRelations", testShopGenreRelationsOne)
+	t.Run("ShopGenres", testShopGenresOne)
 	t.Run("Shops", testShopsOne)
 	t.Run("Staffs", testStaffsOne)
 }
 
 func TestAll(t *testing.T) {
+	t.Run("ShopGenreRelations", testShopGenreRelationsAll)
+	t.Run("ShopGenres", testShopGenresAll)
 	t.Run("Shops", testShopsAll)
 	t.Run("Staffs", testStaffsAll)
 }
 
 func TestCount(t *testing.T) {
+	t.Run("ShopGenreRelations", testShopGenreRelationsCount)
+	t.Run("ShopGenres", testShopGenresCount)
 	t.Run("Shops", testShopsCount)
 	t.Run("Staffs", testStaffsCount)
 }
 
 func TestHooks(t *testing.T) {
+	t.Run("ShopGenreRelations", testShopGenreRelationsHooks)
+	t.Run("ShopGenres", testShopGenresHooks)
 	t.Run("Shops", testShopsHooks)
 	t.Run("Staffs", testStaffsHooks)
 }
 
 func TestInsert(t *testing.T) {
+	t.Run("ShopGenreRelations", testShopGenreRelationsInsert)
+	t.Run("ShopGenreRelations", testShopGenreRelationsInsertWhitelist)
+	t.Run("ShopGenres", testShopGenresInsert)
+	t.Run("ShopGenres", testShopGenresInsertWhitelist)
 	t.Run("Shops", testShopsInsert)
 	t.Run("Shops", testShopsInsertWhitelist)
 	t.Run("Staffs", testStaffsInsert)
@@ -76,6 +102,8 @@ func TestInsert(t *testing.T) {
 // TestToOne tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToOne(t *testing.T) {
+	t.Run("ShopGenreRelationToShopGenreUsingShopGenre", testShopGenreRelationToOneShopGenreUsingShopGenre)
+	t.Run("ShopGenreRelationToShopUsingShop", testShopGenreRelationToOneShopUsingShop)
 	t.Run("StaffToShopUsingShop", testStaffToOneShopUsingShop)
 }
 
@@ -86,12 +114,16 @@ func TestOneToOne(t *testing.T) {}
 // TestToMany tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToMany(t *testing.T) {
+	t.Run("ShopGenreToShopGenreRelations", testShopGenreToManyShopGenreRelations)
+	t.Run("ShopToShopGenreRelations", testShopToManyShopGenreRelations)
 	t.Run("ShopToStaffs", testShopToManyStaffs)
 }
 
 // TestToOneSet tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToOneSet(t *testing.T) {
+	t.Run("ShopGenreRelationToShopGenreUsingShopGenreRelations", testShopGenreRelationToOneSetOpShopGenreUsingShopGenre)
+	t.Run("ShopGenreRelationToShopUsingShopGenreRelations", testShopGenreRelationToOneSetOpShopUsingShop)
 	t.Run("StaffToShopUsingStaffs", testStaffToOneSetOpShopUsingShop)
 }
 
@@ -110,6 +142,8 @@ func TestOneToOneRemove(t *testing.T) {}
 // TestToManyAdd tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToManyAdd(t *testing.T) {
+	t.Run("ShopGenreToShopGenreRelations", testShopGenreToManyAddOpShopGenreRelations)
+	t.Run("ShopToShopGenreRelations", testShopToManyAddOpShopGenreRelations)
 	t.Run("ShopToStaffs", testShopToManyAddOpStaffs)
 }
 
@@ -122,26 +156,36 @@ func TestToManySet(t *testing.T) {}
 func TestToManyRemove(t *testing.T) {}
 
 func TestReload(t *testing.T) {
+	t.Run("ShopGenreRelations", testShopGenreRelationsReload)
+	t.Run("ShopGenres", testShopGenresReload)
 	t.Run("Shops", testShopsReload)
 	t.Run("Staffs", testStaffsReload)
 }
 
 func TestReloadAll(t *testing.T) {
+	t.Run("ShopGenreRelations", testShopGenreRelationsReloadAll)
+	t.Run("ShopGenres", testShopGenresReloadAll)
 	t.Run("Shops", testShopsReloadAll)
 	t.Run("Staffs", testStaffsReloadAll)
 }
 
 func TestSelect(t *testing.T) {
+	t.Run("ShopGenreRelations", testShopGenreRelationsSelect)
+	t.Run("ShopGenres", testShopGenresSelect)
 	t.Run("Shops", testShopsSelect)
 	t.Run("Staffs", testStaffsSelect)
 }
 
 func TestUpdate(t *testing.T) {
+	t.Run("ShopGenreRelations", testShopGenreRelationsUpdate)
+	t.Run("ShopGenres", testShopGenresUpdate)
 	t.Run("Shops", testShopsUpdate)
 	t.Run("Staffs", testStaffsUpdate)
 }
 
 func TestSliceUpdateAll(t *testing.T) {
+	t.Run("ShopGenreRelations", testShopGenreRelationsSliceUpdateAll)
+	t.Run("ShopGenres", testShopGenresSliceUpdateAll)
 	t.Run("Shops", testShopsSliceUpdateAll)
 	t.Run("Staffs", testStaffsSliceUpdateAll)
 }

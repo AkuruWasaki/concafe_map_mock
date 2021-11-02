@@ -21,24 +21,24 @@ var (
 	_ = queries.Equal
 )
 
-func testShops(t *testing.T) {
+func testShopGenres(t *testing.T) {
 	t.Parallel()
 
-	query := Shops()
+	query := ShopGenres()
 
 	if query.Query == nil {
 		t.Error("expected a query, got nothing")
 	}
 }
 
-func testShopsDelete(t *testing.T) {
+func testShopGenresDelete(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Shop{}
-	if err = randomize.Struct(seed, o, shopDBTypes, true, shopColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Shop struct: %s", err)
+	o := &ShopGenre{}
+	if err = randomize.Struct(seed, o, shopGenreDBTypes, true, shopGenreColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize ShopGenre struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -54,7 +54,7 @@ func testShopsDelete(t *testing.T) {
 		t.Error("should only have deleted one row, but affected:", rowsAff)
 	}
 
-	count, err := Shops().Count(ctx, tx)
+	count, err := ShopGenres().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -64,14 +64,14 @@ func testShopsDelete(t *testing.T) {
 	}
 }
 
-func testShopsQueryDeleteAll(t *testing.T) {
+func testShopGenresQueryDeleteAll(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Shop{}
-	if err = randomize.Struct(seed, o, shopDBTypes, true, shopColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Shop struct: %s", err)
+	o := &ShopGenre{}
+	if err = randomize.Struct(seed, o, shopGenreDBTypes, true, shopGenreColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize ShopGenre struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -81,13 +81,13 @@ func testShopsQueryDeleteAll(t *testing.T) {
 		t.Error(err)
 	}
 
-	if rowsAff, err := Shops().DeleteAll(ctx, tx); err != nil {
+	if rowsAff, err := ShopGenres().DeleteAll(ctx, tx); err != nil {
 		t.Error(err)
 	} else if rowsAff != 1 {
 		t.Error("should only have deleted one row, but affected:", rowsAff)
 	}
 
-	count, err := Shops().Count(ctx, tx)
+	count, err := ShopGenres().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -97,14 +97,14 @@ func testShopsQueryDeleteAll(t *testing.T) {
 	}
 }
 
-func testShopsSliceDeleteAll(t *testing.T) {
+func testShopGenresSliceDeleteAll(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Shop{}
-	if err = randomize.Struct(seed, o, shopDBTypes, true, shopColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Shop struct: %s", err)
+	o := &ShopGenre{}
+	if err = randomize.Struct(seed, o, shopGenreDBTypes, true, shopGenreColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize ShopGenre struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -114,7 +114,7 @@ func testShopsSliceDeleteAll(t *testing.T) {
 		t.Error(err)
 	}
 
-	slice := ShopSlice{o}
+	slice := ShopGenreSlice{o}
 
 	if rowsAff, err := slice.DeleteAll(ctx, tx); err != nil {
 		t.Error(err)
@@ -122,7 +122,7 @@ func testShopsSliceDeleteAll(t *testing.T) {
 		t.Error("should only have deleted one row, but affected:", rowsAff)
 	}
 
-	count, err := Shops().Count(ctx, tx)
+	count, err := ShopGenres().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -132,14 +132,14 @@ func testShopsSliceDeleteAll(t *testing.T) {
 	}
 }
 
-func testShopsExists(t *testing.T) {
+func testShopGenresExists(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Shop{}
-	if err = randomize.Struct(seed, o, shopDBTypes, true, shopColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Shop struct: %s", err)
+	o := &ShopGenre{}
+	if err = randomize.Struct(seed, o, shopGenreDBTypes, true, shopGenreColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize ShopGenre struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -149,23 +149,23 @@ func testShopsExists(t *testing.T) {
 		t.Error(err)
 	}
 
-	e, err := ShopExists(ctx, tx, o.ID)
+	e, err := ShopGenreExists(ctx, tx, o.ID)
 	if err != nil {
-		t.Errorf("Unable to check if Shop exists: %s", err)
+		t.Errorf("Unable to check if ShopGenre exists: %s", err)
 	}
 	if !e {
-		t.Errorf("Expected ShopExists to return true, but got false.")
+		t.Errorf("Expected ShopGenreExists to return true, but got false.")
 	}
 }
 
-func testShopsFind(t *testing.T) {
+func testShopGenresFind(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Shop{}
-	if err = randomize.Struct(seed, o, shopDBTypes, true, shopColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Shop struct: %s", err)
+	o := &ShopGenre{}
+	if err = randomize.Struct(seed, o, shopGenreDBTypes, true, shopGenreColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize ShopGenre struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -175,24 +175,24 @@ func testShopsFind(t *testing.T) {
 		t.Error(err)
 	}
 
-	shopFound, err := FindShop(ctx, tx, o.ID)
+	shopGenreFound, err := FindShopGenre(ctx, tx, o.ID)
 	if err != nil {
 		t.Error(err)
 	}
 
-	if shopFound == nil {
+	if shopGenreFound == nil {
 		t.Error("want a record, got nil")
 	}
 }
 
-func testShopsBind(t *testing.T) {
+func testShopGenresBind(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Shop{}
-	if err = randomize.Struct(seed, o, shopDBTypes, true, shopColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Shop struct: %s", err)
+	o := &ShopGenre{}
+	if err = randomize.Struct(seed, o, shopGenreDBTypes, true, shopGenreColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize ShopGenre struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -202,19 +202,19 @@ func testShopsBind(t *testing.T) {
 		t.Error(err)
 	}
 
-	if err = Shops().Bind(ctx, tx, o); err != nil {
+	if err = ShopGenres().Bind(ctx, tx, o); err != nil {
 		t.Error(err)
 	}
 }
 
-func testShopsOne(t *testing.T) {
+func testShopGenresOne(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Shop{}
-	if err = randomize.Struct(seed, o, shopDBTypes, true, shopColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Shop struct: %s", err)
+	o := &ShopGenre{}
+	if err = randomize.Struct(seed, o, shopGenreDBTypes, true, shopGenreColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize ShopGenre struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -224,38 +224,38 @@ func testShopsOne(t *testing.T) {
 		t.Error(err)
 	}
 
-	if x, err := Shops().One(ctx, tx); err != nil {
+	if x, err := ShopGenres().One(ctx, tx); err != nil {
 		t.Error(err)
 	} else if x == nil {
 		t.Error("expected to get a non nil record")
 	}
 }
 
-func testShopsAll(t *testing.T) {
+func testShopGenresAll(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	shopOne := &Shop{}
-	shopTwo := &Shop{}
-	if err = randomize.Struct(seed, shopOne, shopDBTypes, false, shopColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Shop struct: %s", err)
+	shopGenreOne := &ShopGenre{}
+	shopGenreTwo := &ShopGenre{}
+	if err = randomize.Struct(seed, shopGenreOne, shopGenreDBTypes, false, shopGenreColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize ShopGenre struct: %s", err)
 	}
-	if err = randomize.Struct(seed, shopTwo, shopDBTypes, false, shopColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Shop struct: %s", err)
+	if err = randomize.Struct(seed, shopGenreTwo, shopGenreDBTypes, false, shopGenreColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize ShopGenre struct: %s", err)
 	}
 
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
-	if err = shopOne.Insert(ctx, tx, boil.Infer()); err != nil {
+	if err = shopGenreOne.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Error(err)
 	}
-	if err = shopTwo.Insert(ctx, tx, boil.Infer()); err != nil {
+	if err = shopGenreTwo.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Error(err)
 	}
 
-	slice, err := Shops().All(ctx, tx)
+	slice, err := ShopGenres().All(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -265,31 +265,31 @@ func testShopsAll(t *testing.T) {
 	}
 }
 
-func testShopsCount(t *testing.T) {
+func testShopGenresCount(t *testing.T) {
 	t.Parallel()
 
 	var err error
 	seed := randomize.NewSeed()
-	shopOne := &Shop{}
-	shopTwo := &Shop{}
-	if err = randomize.Struct(seed, shopOne, shopDBTypes, false, shopColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Shop struct: %s", err)
+	shopGenreOne := &ShopGenre{}
+	shopGenreTwo := &ShopGenre{}
+	if err = randomize.Struct(seed, shopGenreOne, shopGenreDBTypes, false, shopGenreColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize ShopGenre struct: %s", err)
 	}
-	if err = randomize.Struct(seed, shopTwo, shopDBTypes, false, shopColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Shop struct: %s", err)
+	if err = randomize.Struct(seed, shopGenreTwo, shopGenreDBTypes, false, shopGenreColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize ShopGenre struct: %s", err)
 	}
 
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
-	if err = shopOne.Insert(ctx, tx, boil.Infer()); err != nil {
+	if err = shopGenreOne.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Error(err)
 	}
-	if err = shopTwo.Insert(ctx, tx, boil.Infer()); err != nil {
+	if err = shopGenreTwo.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Error(err)
 	}
 
-	count, err := Shops().Count(ctx, tx)
+	count, err := ShopGenres().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -299,155 +299,155 @@ func testShopsCount(t *testing.T) {
 	}
 }
 
-func shopBeforeInsertHook(ctx context.Context, e boil.ContextExecutor, o *Shop) error {
-	*o = Shop{}
+func shopGenreBeforeInsertHook(ctx context.Context, e boil.ContextExecutor, o *ShopGenre) error {
+	*o = ShopGenre{}
 	return nil
 }
 
-func shopAfterInsertHook(ctx context.Context, e boil.ContextExecutor, o *Shop) error {
-	*o = Shop{}
+func shopGenreAfterInsertHook(ctx context.Context, e boil.ContextExecutor, o *ShopGenre) error {
+	*o = ShopGenre{}
 	return nil
 }
 
-func shopAfterSelectHook(ctx context.Context, e boil.ContextExecutor, o *Shop) error {
-	*o = Shop{}
+func shopGenreAfterSelectHook(ctx context.Context, e boil.ContextExecutor, o *ShopGenre) error {
+	*o = ShopGenre{}
 	return nil
 }
 
-func shopBeforeUpdateHook(ctx context.Context, e boil.ContextExecutor, o *Shop) error {
-	*o = Shop{}
+func shopGenreBeforeUpdateHook(ctx context.Context, e boil.ContextExecutor, o *ShopGenre) error {
+	*o = ShopGenre{}
 	return nil
 }
 
-func shopAfterUpdateHook(ctx context.Context, e boil.ContextExecutor, o *Shop) error {
-	*o = Shop{}
+func shopGenreAfterUpdateHook(ctx context.Context, e boil.ContextExecutor, o *ShopGenre) error {
+	*o = ShopGenre{}
 	return nil
 }
 
-func shopBeforeDeleteHook(ctx context.Context, e boil.ContextExecutor, o *Shop) error {
-	*o = Shop{}
+func shopGenreBeforeDeleteHook(ctx context.Context, e boil.ContextExecutor, o *ShopGenre) error {
+	*o = ShopGenre{}
 	return nil
 }
 
-func shopAfterDeleteHook(ctx context.Context, e boil.ContextExecutor, o *Shop) error {
-	*o = Shop{}
+func shopGenreAfterDeleteHook(ctx context.Context, e boil.ContextExecutor, o *ShopGenre) error {
+	*o = ShopGenre{}
 	return nil
 }
 
-func shopBeforeUpsertHook(ctx context.Context, e boil.ContextExecutor, o *Shop) error {
-	*o = Shop{}
+func shopGenreBeforeUpsertHook(ctx context.Context, e boil.ContextExecutor, o *ShopGenre) error {
+	*o = ShopGenre{}
 	return nil
 }
 
-func shopAfterUpsertHook(ctx context.Context, e boil.ContextExecutor, o *Shop) error {
-	*o = Shop{}
+func shopGenreAfterUpsertHook(ctx context.Context, e boil.ContextExecutor, o *ShopGenre) error {
+	*o = ShopGenre{}
 	return nil
 }
 
-func testShopsHooks(t *testing.T) {
+func testShopGenresHooks(t *testing.T) {
 	t.Parallel()
 
 	var err error
 
 	ctx := context.Background()
-	empty := &Shop{}
-	o := &Shop{}
+	empty := &ShopGenre{}
+	o := &ShopGenre{}
 
 	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, o, shopDBTypes, false); err != nil {
-		t.Errorf("Unable to randomize Shop object: %s", err)
+	if err = randomize.Struct(seed, o, shopGenreDBTypes, false); err != nil {
+		t.Errorf("Unable to randomize ShopGenre object: %s", err)
 	}
 
-	AddShopHook(boil.BeforeInsertHook, shopBeforeInsertHook)
+	AddShopGenreHook(boil.BeforeInsertHook, shopGenreBeforeInsertHook)
 	if err = o.doBeforeInsertHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doBeforeInsertHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected BeforeInsertHook function to empty object, but got: %#v", o)
 	}
-	shopBeforeInsertHooks = []ShopHook{}
+	shopGenreBeforeInsertHooks = []ShopGenreHook{}
 
-	AddShopHook(boil.AfterInsertHook, shopAfterInsertHook)
+	AddShopGenreHook(boil.AfterInsertHook, shopGenreAfterInsertHook)
 	if err = o.doAfterInsertHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doAfterInsertHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected AfterInsertHook function to empty object, but got: %#v", o)
 	}
-	shopAfterInsertHooks = []ShopHook{}
+	shopGenreAfterInsertHooks = []ShopGenreHook{}
 
-	AddShopHook(boil.AfterSelectHook, shopAfterSelectHook)
+	AddShopGenreHook(boil.AfterSelectHook, shopGenreAfterSelectHook)
 	if err = o.doAfterSelectHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doAfterSelectHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected AfterSelectHook function to empty object, but got: %#v", o)
 	}
-	shopAfterSelectHooks = []ShopHook{}
+	shopGenreAfterSelectHooks = []ShopGenreHook{}
 
-	AddShopHook(boil.BeforeUpdateHook, shopBeforeUpdateHook)
+	AddShopGenreHook(boil.BeforeUpdateHook, shopGenreBeforeUpdateHook)
 	if err = o.doBeforeUpdateHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doBeforeUpdateHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected BeforeUpdateHook function to empty object, but got: %#v", o)
 	}
-	shopBeforeUpdateHooks = []ShopHook{}
+	shopGenreBeforeUpdateHooks = []ShopGenreHook{}
 
-	AddShopHook(boil.AfterUpdateHook, shopAfterUpdateHook)
+	AddShopGenreHook(boil.AfterUpdateHook, shopGenreAfterUpdateHook)
 	if err = o.doAfterUpdateHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doAfterUpdateHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected AfterUpdateHook function to empty object, but got: %#v", o)
 	}
-	shopAfterUpdateHooks = []ShopHook{}
+	shopGenreAfterUpdateHooks = []ShopGenreHook{}
 
-	AddShopHook(boil.BeforeDeleteHook, shopBeforeDeleteHook)
+	AddShopGenreHook(boil.BeforeDeleteHook, shopGenreBeforeDeleteHook)
 	if err = o.doBeforeDeleteHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doBeforeDeleteHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected BeforeDeleteHook function to empty object, but got: %#v", o)
 	}
-	shopBeforeDeleteHooks = []ShopHook{}
+	shopGenreBeforeDeleteHooks = []ShopGenreHook{}
 
-	AddShopHook(boil.AfterDeleteHook, shopAfterDeleteHook)
+	AddShopGenreHook(boil.AfterDeleteHook, shopGenreAfterDeleteHook)
 	if err = o.doAfterDeleteHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doAfterDeleteHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected AfterDeleteHook function to empty object, but got: %#v", o)
 	}
-	shopAfterDeleteHooks = []ShopHook{}
+	shopGenreAfterDeleteHooks = []ShopGenreHook{}
 
-	AddShopHook(boil.BeforeUpsertHook, shopBeforeUpsertHook)
+	AddShopGenreHook(boil.BeforeUpsertHook, shopGenreBeforeUpsertHook)
 	if err = o.doBeforeUpsertHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doBeforeUpsertHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected BeforeUpsertHook function to empty object, but got: %#v", o)
 	}
-	shopBeforeUpsertHooks = []ShopHook{}
+	shopGenreBeforeUpsertHooks = []ShopGenreHook{}
 
-	AddShopHook(boil.AfterUpsertHook, shopAfterUpsertHook)
+	AddShopGenreHook(boil.AfterUpsertHook, shopGenreAfterUpsertHook)
 	if err = o.doAfterUpsertHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doAfterUpsertHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected AfterUpsertHook function to empty object, but got: %#v", o)
 	}
-	shopAfterUpsertHooks = []ShopHook{}
+	shopGenreAfterUpsertHooks = []ShopGenreHook{}
 }
 
-func testShopsInsert(t *testing.T) {
+func testShopGenresInsert(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Shop{}
-	if err = randomize.Struct(seed, o, shopDBTypes, true, shopColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Shop struct: %s", err)
+	o := &ShopGenre{}
+	if err = randomize.Struct(seed, o, shopGenreDBTypes, true, shopGenreColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize ShopGenre struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -457,7 +457,7 @@ func testShopsInsert(t *testing.T) {
 		t.Error(err)
 	}
 
-	count, err := Shops().Count(ctx, tx)
+	count, err := ShopGenres().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -467,24 +467,24 @@ func testShopsInsert(t *testing.T) {
 	}
 }
 
-func testShopsInsertWhitelist(t *testing.T) {
+func testShopGenresInsertWhitelist(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Shop{}
-	if err = randomize.Struct(seed, o, shopDBTypes, true); err != nil {
-		t.Errorf("Unable to randomize Shop struct: %s", err)
+	o := &ShopGenre{}
+	if err = randomize.Struct(seed, o, shopGenreDBTypes, true); err != nil {
+		t.Errorf("Unable to randomize ShopGenre struct: %s", err)
 	}
 
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
-	if err = o.Insert(ctx, tx, boil.Whitelist(shopColumnsWithoutDefault...)); err != nil {
+	if err = o.Insert(ctx, tx, boil.Whitelist(shopGenreColumnsWithoutDefault...)); err != nil {
 		t.Error(err)
 	}
 
-	count, err := Shops().Count(ctx, tx)
+	count, err := ShopGenres().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -494,18 +494,18 @@ func testShopsInsertWhitelist(t *testing.T) {
 	}
 }
 
-func testShopToManyShopGenreRelations(t *testing.T) {
+func testShopGenreToManyShopGenreRelations(t *testing.T) {
 	var err error
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
-	var a Shop
+	var a ShopGenre
 	var b, c ShopGenreRelation
 
 	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, &a, shopDBTypes, true, shopColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Shop struct: %s", err)
+	if err = randomize.Struct(seed, &a, shopGenreDBTypes, true, shopGenreColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize ShopGenre struct: %s", err)
 	}
 
 	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
@@ -519,8 +519,8 @@ func testShopToManyShopGenreRelations(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	b.ShopID = a.ID
-	c.ShopID = a.ID
+	b.ShopGenreID = a.ID
+	c.ShopGenreID = a.ID
 
 	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
@@ -536,10 +536,10 @@ func testShopToManyShopGenreRelations(t *testing.T) {
 
 	bFound, cFound := false, false
 	for _, v := range check {
-		if v.ShopID == b.ShopID {
+		if v.ShopGenreID == b.ShopGenreID {
 			bFound = true
 		}
-		if v.ShopID == c.ShopID {
+		if v.ShopGenreID == c.ShopGenreID {
 			cFound = true
 		}
 	}
@@ -551,8 +551,8 @@ func testShopToManyShopGenreRelations(t *testing.T) {
 		t.Error("expected to find c")
 	}
 
-	slice := ShopSlice{&a}
-	if err = a.L.LoadShopGenreRelations(ctx, tx, false, (*[]*Shop)(&slice), nil); err != nil {
+	slice := ShopGenreSlice{&a}
+	if err = a.L.LoadShopGenreRelations(ctx, tx, false, (*[]*ShopGenre)(&slice), nil); err != nil {
 		t.Fatal(err)
 	}
 	if got := len(a.R.ShopGenreRelations); got != 2 {
@@ -572,96 +572,18 @@ func testShopToManyShopGenreRelations(t *testing.T) {
 	}
 }
 
-func testShopToManyStaffs(t *testing.T) {
-	var err error
-	ctx := context.Background()
-	tx := MustTx(boil.BeginTx(ctx, nil))
-	defer func() { _ = tx.Rollback() }()
-
-	var a Shop
-	var b, c Staff
-
-	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, &a, shopDBTypes, true, shopColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Shop struct: %s", err)
-	}
-
-	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
-		t.Fatal(err)
-	}
-
-	if err = randomize.Struct(seed, &b, staffDBTypes, false, staffColumnsWithDefault...); err != nil {
-		t.Fatal(err)
-	}
-	if err = randomize.Struct(seed, &c, staffDBTypes, false, staffColumnsWithDefault...); err != nil {
-		t.Fatal(err)
-	}
-
-	b.ShopID = a.ID
-	c.ShopID = a.ID
-
-	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
-		t.Fatal(err)
-	}
-	if err = c.Insert(ctx, tx, boil.Infer()); err != nil {
-		t.Fatal(err)
-	}
-
-	check, err := a.Staffs().All(ctx, tx)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	bFound, cFound := false, false
-	for _, v := range check {
-		if v.ShopID == b.ShopID {
-			bFound = true
-		}
-		if v.ShopID == c.ShopID {
-			cFound = true
-		}
-	}
-
-	if !bFound {
-		t.Error("expected to find b")
-	}
-	if !cFound {
-		t.Error("expected to find c")
-	}
-
-	slice := ShopSlice{&a}
-	if err = a.L.LoadStaffs(ctx, tx, false, (*[]*Shop)(&slice), nil); err != nil {
-		t.Fatal(err)
-	}
-	if got := len(a.R.Staffs); got != 2 {
-		t.Error("number of eager loaded records wrong, got:", got)
-	}
-
-	a.R.Staffs = nil
-	if err = a.L.LoadStaffs(ctx, tx, true, &a, nil); err != nil {
-		t.Fatal(err)
-	}
-	if got := len(a.R.Staffs); got != 2 {
-		t.Error("number of eager loaded records wrong, got:", got)
-	}
-
-	if t.Failed() {
-		t.Logf("%#v", check)
-	}
-}
-
-func testShopToManyAddOpShopGenreRelations(t *testing.T) {
+func testShopGenreToManyAddOpShopGenreRelations(t *testing.T) {
 	var err error
 
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
-	var a Shop
+	var a ShopGenre
 	var b, c, d, e ShopGenreRelation
 
 	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, &a, shopDBTypes, false, strmangle.SetComplement(shopPrimaryKeyColumns, shopColumnsWithoutDefault)...); err != nil {
+	if err = randomize.Struct(seed, &a, shopGenreDBTypes, false, strmangle.SetComplement(shopGenrePrimaryKeyColumns, shopGenreColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
 	foreigners := []*ShopGenreRelation{&b, &c, &d, &e}
@@ -695,17 +617,17 @@ func testShopToManyAddOpShopGenreRelations(t *testing.T) {
 		first := x[0]
 		second := x[1]
 
-		if a.ID != first.ShopID {
-			t.Error("foreign key was wrong value", a.ID, first.ShopID)
+		if a.ID != first.ShopGenreID {
+			t.Error("foreign key was wrong value", a.ID, first.ShopGenreID)
 		}
-		if a.ID != second.ShopID {
-			t.Error("foreign key was wrong value", a.ID, second.ShopID)
+		if a.ID != second.ShopGenreID {
+			t.Error("foreign key was wrong value", a.ID, second.ShopGenreID)
 		}
 
-		if first.R.Shop != &a {
+		if first.R.ShopGenre != &a {
 			t.Error("relationship was not added properly to the foreign slice")
 		}
-		if second.R.Shop != &a {
+		if second.R.ShopGenre != &a {
 			t.Error("relationship was not added properly to the foreign slice")
 		}
 
@@ -725,90 +647,15 @@ func testShopToManyAddOpShopGenreRelations(t *testing.T) {
 		}
 	}
 }
-func testShopToManyAddOpStaffs(t *testing.T) {
-	var err error
 
-	ctx := context.Background()
-	tx := MustTx(boil.BeginTx(ctx, nil))
-	defer func() { _ = tx.Rollback() }()
-
-	var a Shop
-	var b, c, d, e Staff
-
-	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, &a, shopDBTypes, false, strmangle.SetComplement(shopPrimaryKeyColumns, shopColumnsWithoutDefault)...); err != nil {
-		t.Fatal(err)
-	}
-	foreigners := []*Staff{&b, &c, &d, &e}
-	for _, x := range foreigners {
-		if err = randomize.Struct(seed, x, staffDBTypes, false, strmangle.SetComplement(staffPrimaryKeyColumns, staffColumnsWithoutDefault)...); err != nil {
-			t.Fatal(err)
-		}
-	}
-
-	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
-		t.Fatal(err)
-	}
-	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
-		t.Fatal(err)
-	}
-	if err = c.Insert(ctx, tx, boil.Infer()); err != nil {
-		t.Fatal(err)
-	}
-
-	foreignersSplitByInsertion := [][]*Staff{
-		{&b, &c},
-		{&d, &e},
-	}
-
-	for i, x := range foreignersSplitByInsertion {
-		err = a.AddStaffs(ctx, tx, i != 0, x...)
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		first := x[0]
-		second := x[1]
-
-		if a.ID != first.ShopID {
-			t.Error("foreign key was wrong value", a.ID, first.ShopID)
-		}
-		if a.ID != second.ShopID {
-			t.Error("foreign key was wrong value", a.ID, second.ShopID)
-		}
-
-		if first.R.Shop != &a {
-			t.Error("relationship was not added properly to the foreign slice")
-		}
-		if second.R.Shop != &a {
-			t.Error("relationship was not added properly to the foreign slice")
-		}
-
-		if a.R.Staffs[i*2] != first {
-			t.Error("relationship struct slice not set to correct value")
-		}
-		if a.R.Staffs[i*2+1] != second {
-			t.Error("relationship struct slice not set to correct value")
-		}
-
-		count, err := a.Staffs().Count(ctx, tx)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if want := int64((i + 1) * 2); count != want {
-			t.Error("want", want, "got", count)
-		}
-	}
-}
-
-func testShopsReload(t *testing.T) {
+func testShopGenresReload(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Shop{}
-	if err = randomize.Struct(seed, o, shopDBTypes, true, shopColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Shop struct: %s", err)
+	o := &ShopGenre{}
+	if err = randomize.Struct(seed, o, shopGenreDBTypes, true, shopGenreColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize ShopGenre struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -823,14 +670,14 @@ func testShopsReload(t *testing.T) {
 	}
 }
 
-func testShopsReloadAll(t *testing.T) {
+func testShopGenresReloadAll(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Shop{}
-	if err = randomize.Struct(seed, o, shopDBTypes, true, shopColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Shop struct: %s", err)
+	o := &ShopGenre{}
+	if err = randomize.Struct(seed, o, shopGenreDBTypes, true, shopGenreColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize ShopGenre struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -840,21 +687,21 @@ func testShopsReloadAll(t *testing.T) {
 		t.Error(err)
 	}
 
-	slice := ShopSlice{o}
+	slice := ShopGenreSlice{o}
 
 	if err = slice.ReloadAll(ctx, tx); err != nil {
 		t.Error(err)
 	}
 }
 
-func testShopsSelect(t *testing.T) {
+func testShopGenresSelect(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Shop{}
-	if err = randomize.Struct(seed, o, shopDBTypes, true, shopColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Shop struct: %s", err)
+	o := &ShopGenre{}
+	if err = randomize.Struct(seed, o, shopGenreDBTypes, true, shopGenreColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize ShopGenre struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -864,7 +711,7 @@ func testShopsSelect(t *testing.T) {
 		t.Error(err)
 	}
 
-	slice, err := Shops().All(ctx, tx)
+	slice, err := ShopGenres().All(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -875,25 +722,25 @@ func testShopsSelect(t *testing.T) {
 }
 
 var (
-	shopDBTypes = map[string]string{`ID`: `int`, `Name`: `varchar`, `Address`: `varchar`, `Tel`: `varchar`, `Content`: `varchar`, `CreatedAt`: `datetime`, `UpdatedAt`: `datetime`}
-	_           = bytes.MinRead
+	shopGenreDBTypes = map[string]string{`ID`: `int`, `Name`: `varchar`}
+	_                = bytes.MinRead
 )
 
-func testShopsUpdate(t *testing.T) {
+func testShopGenresUpdate(t *testing.T) {
 	t.Parallel()
 
-	if 0 == len(shopPrimaryKeyColumns) {
+	if 0 == len(shopGenrePrimaryKeyColumns) {
 		t.Skip("Skipping table with no primary key columns")
 	}
-	if len(shopAllColumns) == len(shopPrimaryKeyColumns) {
+	if len(shopGenreAllColumns) == len(shopGenrePrimaryKeyColumns) {
 		t.Skip("Skipping table with only primary key columns")
 	}
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Shop{}
-	if err = randomize.Struct(seed, o, shopDBTypes, true, shopColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Shop struct: %s", err)
+	o := &ShopGenre{}
+	if err = randomize.Struct(seed, o, shopGenreDBTypes, true, shopGenreColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize ShopGenre struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -903,7 +750,7 @@ func testShopsUpdate(t *testing.T) {
 		t.Error(err)
 	}
 
-	count, err := Shops().Count(ctx, tx)
+	count, err := ShopGenres().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -912,8 +759,8 @@ func testShopsUpdate(t *testing.T) {
 		t.Error("want one record, got:", count)
 	}
 
-	if err = randomize.Struct(seed, o, shopDBTypes, true, shopPrimaryKeyColumns...); err != nil {
-		t.Errorf("Unable to randomize Shop struct: %s", err)
+	if err = randomize.Struct(seed, o, shopGenreDBTypes, true, shopGenrePrimaryKeyColumns...); err != nil {
+		t.Errorf("Unable to randomize ShopGenre struct: %s", err)
 	}
 
 	if rowsAff, err := o.Update(ctx, tx, boil.Infer()); err != nil {
@@ -923,18 +770,18 @@ func testShopsUpdate(t *testing.T) {
 	}
 }
 
-func testShopsSliceUpdateAll(t *testing.T) {
+func testShopGenresSliceUpdateAll(t *testing.T) {
 	t.Parallel()
 
-	if len(shopAllColumns) == len(shopPrimaryKeyColumns) {
+	if len(shopGenreAllColumns) == len(shopGenrePrimaryKeyColumns) {
 		t.Skip("Skipping table with only primary key columns")
 	}
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Shop{}
-	if err = randomize.Struct(seed, o, shopDBTypes, true, shopColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Shop struct: %s", err)
+	o := &ShopGenre{}
+	if err = randomize.Struct(seed, o, shopGenreDBTypes, true, shopGenreColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize ShopGenre struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -944,7 +791,7 @@ func testShopsSliceUpdateAll(t *testing.T) {
 		t.Error(err)
 	}
 
-	count, err := Shops().Count(ctx, tx)
+	count, err := ShopGenres().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -953,18 +800,18 @@ func testShopsSliceUpdateAll(t *testing.T) {
 		t.Error("want one record, got:", count)
 	}
 
-	if err = randomize.Struct(seed, o, shopDBTypes, true, shopPrimaryKeyColumns...); err != nil {
-		t.Errorf("Unable to randomize Shop struct: %s", err)
+	if err = randomize.Struct(seed, o, shopGenreDBTypes, true, shopGenrePrimaryKeyColumns...); err != nil {
+		t.Errorf("Unable to randomize ShopGenre struct: %s", err)
 	}
 
 	// Remove Primary keys and unique columns from what we plan to update
 	var fields []string
-	if strmangle.StringSliceMatch(shopAllColumns, shopPrimaryKeyColumns) {
-		fields = shopAllColumns
+	if strmangle.StringSliceMatch(shopGenreAllColumns, shopGenrePrimaryKeyColumns) {
+		fields = shopGenreAllColumns
 	} else {
 		fields = strmangle.SetComplement(
-			shopAllColumns,
-			shopPrimaryKeyColumns,
+			shopGenreAllColumns,
+			shopGenrePrimaryKeyColumns,
 		)
 	}
 
@@ -982,7 +829,7 @@ func testShopsSliceUpdateAll(t *testing.T) {
 		}
 	}
 
-	slice := ShopSlice{o}
+	slice := ShopGenreSlice{o}
 	if rowsAff, err := slice.UpdateAll(ctx, tx, updateMap); err != nil {
 		t.Error(err)
 	} else if rowsAff != 1 {
@@ -990,32 +837,32 @@ func testShopsSliceUpdateAll(t *testing.T) {
 	}
 }
 
-func testShopsUpsert(t *testing.T) {
+func testShopGenresUpsert(t *testing.T) {
 	t.Parallel()
 
-	if len(shopAllColumns) == len(shopPrimaryKeyColumns) {
+	if len(shopGenreAllColumns) == len(shopGenrePrimaryKeyColumns) {
 		t.Skip("Skipping table with only primary key columns")
 	}
-	if len(mySQLShopUniqueColumns) == 0 {
+	if len(mySQLShopGenreUniqueColumns) == 0 {
 		t.Skip("Skipping table with no unique columns to conflict on")
 	}
 
 	seed := randomize.NewSeed()
 	var err error
 	// Attempt the INSERT side of an UPSERT
-	o := Shop{}
-	if err = randomize.Struct(seed, &o, shopDBTypes, false); err != nil {
-		t.Errorf("Unable to randomize Shop struct: %s", err)
+	o := ShopGenre{}
+	if err = randomize.Struct(seed, &o, shopGenreDBTypes, false); err != nil {
+		t.Errorf("Unable to randomize ShopGenre struct: %s", err)
 	}
 
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 	if err = o.Upsert(ctx, tx, boil.Infer(), boil.Infer()); err != nil {
-		t.Errorf("Unable to upsert Shop: %s", err)
+		t.Errorf("Unable to upsert ShopGenre: %s", err)
 	}
 
-	count, err := Shops().Count(ctx, tx)
+	count, err := ShopGenres().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -1024,15 +871,15 @@ func testShopsUpsert(t *testing.T) {
 	}
 
 	// Attempt the UPDATE side of an UPSERT
-	if err = randomize.Struct(seed, &o, shopDBTypes, false, shopPrimaryKeyColumns...); err != nil {
-		t.Errorf("Unable to randomize Shop struct: %s", err)
+	if err = randomize.Struct(seed, &o, shopGenreDBTypes, false, shopGenrePrimaryKeyColumns...); err != nil {
+		t.Errorf("Unable to randomize ShopGenre struct: %s", err)
 	}
 
 	if err = o.Upsert(ctx, tx, boil.Infer(), boil.Infer()); err != nil {
-		t.Errorf("Unable to upsert Shop: %s", err)
+		t.Errorf("Unable to upsert ShopGenre: %s", err)
 	}
 
-	count, err = Shops().Count(ctx, tx)
+	count, err = ShopGenres().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}

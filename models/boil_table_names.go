@@ -4,9 +4,13 @@
 package models
 
 var TableNames = struct {
-	Shops  string
-	Staffs string
+	ShopGenreRelations string
+	ShopGenres         string
+	Shops              string
+	Staffs             string
 }{
-	Shops:  "shops",
-	Staffs: "staffs",
+	ShopGenreRelations: "shop_genre_relations",
+	ShopGenres:         "shop_genres",
+	Shops:              "shops",
+	Staffs:             "staffs",
 }
