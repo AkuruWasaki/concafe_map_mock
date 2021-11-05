@@ -6,6 +6,7 @@ import (
 	"os"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/volatiletech/sqlboiler/v4/boil"
 )
 
 func Connect() *sql.DB {
@@ -20,5 +21,8 @@ func Connect() *sql.DB {
 	if err != nil {
 		fmt.Println(err.Error())
 	}
+	// 発行されるSQL文を確認するためdebug mode
+	boil.DebugMode = true
+
 	return db
 }
