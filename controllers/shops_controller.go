@@ -26,6 +26,7 @@ func (sc ShopsController) Index(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatus(400)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 	c.JSON(200, shops)
 }
@@ -140,7 +141,7 @@ func (sc ShopsController) Delete(c *gin.Context) {
 	if _, err = shop.Delete(c, db); err != nil {
 		c.AbortWithStatus(400)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
-
 	c.JSON(200, gin.H{"success": "ID: " + id + "の店舗情報を削除しました"})
 }
