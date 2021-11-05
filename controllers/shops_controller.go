@@ -111,6 +111,21 @@ func (sc ShopsController) Delete(c *gin.Context) {
 	// idをint型に変換
 	idInt, _ := strconv.Atoi(id)
 
+	// 関連テーブルのデータを削除する。
+	// 店舗ジャンル削除
+	if _, err := models.ShopGenreRelations(models.ShopGenreRelationWhere.ShopID.EQ(idInt)).DeleteAll(c, db); err != nil {
+		c.AbortWithStatus(400)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// 店舗スタッフ削除
+	if _, err := models.Staffs(models.StaffWhere.ShopID.EQ(idInt)).DeleteAll(c, db); err != nil {
+		c.AbortWithStatus(400)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
 	// find shop data
 	shop, err := models.FindShop(c, db, idInt)
 	if err != nil {
@@ -120,11 +135,10 @@ func (sc ShopsController) Delete(c *gin.Context) {
 	}
 
 	// delete shop
-	_, err = shop.Delete(c, db)
-
-	if err != nil {
+	if _, err = shop.Delete(c, db); err != nil {
 		c.AbortWithStatus(400)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
+
 	c.JSON(200, gin.H{"success": "ID: " + id + "の店舗情報を削除しました"})
 }
