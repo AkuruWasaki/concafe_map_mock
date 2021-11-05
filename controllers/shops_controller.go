@@ -94,10 +94,12 @@ func (sc ShopsController) Update(c *gin.Context) {
 		return
 	}
 
+	// 店舗情報アップデート
 	_, err = shop.Update(c, db, boil.Infer())
 	if err != nil {
 		c.AbortWithStatus(400)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 	c.JSON(200, gin.H{"success": "ID: " + id + "の店舗情報を更新しました"})
 }

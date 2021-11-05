@@ -21,6 +21,7 @@ func (sc StaffsController) Index(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatus(400)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 	c.JSON(200, staffs)
 }
@@ -30,7 +31,11 @@ func (sc StaffsController) Create(c *gin.Context) {
 	db := db.Connect()
 	var staff models.Staff
 
-	c.BindJSON(&staff)
+	if err := c.BindJSON(&staff); err != nil {
+		c.AbortWithStatus(400)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
 	if err := staff.Insert(c, db, boil.Infer()); err != nil {
 		c.AbortWithStatus(400)
@@ -65,12 +70,17 @@ func (sc StaffsController) Update(c *gin.Context) {
 	}
 
 	// set param
-	c.BindJSON(&staff)
+	if err := c.BindJSON(&staff); err != nil {
+		c.AbortWithStatus(400)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
 	_, err = staff.Update(c, db, boil.Infer())
 	if err != nil {
 		c.AbortWithStatus(400)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 	c.JSON(200, gin.H{"success": "ID: " + id + "のスタッフ情報を更新しました"})
 }
@@ -93,11 +103,10 @@ func (sc StaffsController) Delete(c *gin.Context) {
 	}
 
 	// delete staff
-	_, err = staff.Delete(c, db)
-
-	if err != nil {
+	if _, err = staff.Delete(c, db); err != nil {
 		c.AbortWithStatus(400)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 	c.JSON(200, gin.H{"success": "ID: " + id + "のスタッフ情報を削除しました"})
 }
