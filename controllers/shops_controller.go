@@ -41,8 +41,7 @@ func (sc ShopsController) Create(c *gin.Context) {
 		return
 	}
 
-	db := sc.DB
-	if err := shop.Shop.Insert(c, db, boil.Infer()); err != nil {
+	if err := shop.Shop.Insert(c, sc.DB, boil.Infer()); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -53,7 +52,7 @@ func (sc ShopsController) Create(c *gin.Context) {
 		shop_genre_relation.ShopGenreID = genre_id
 		shop_genre_relation.ShopID = shop.Shop.ID
 		// insert
-		if err := shop_genre_relation.Insert(c, db, boil.Infer()); err != nil {
+		if err := shop_genre_relation.Insert(c, sc.DB, boil.Infer()); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
@@ -73,6 +72,7 @@ func (sc ShopsController) Update(c *gin.Context) {
 	// find shop data
 	shop, err := models.FindShop(c, sc.DB, idInt)
 	if shop == nil {
+		c.AbortWithStatus(400)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "shop not found"})
 		return
 	}
@@ -107,6 +107,18 @@ func (sc ShopsController) Delete(c *gin.Context) {
 		return
 	}
 
+	// find shop data
+	shop, err := models.FindShop(c, sc.DB, idInt)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
 	// 関連テーブルのデータを削除する。
 	// 店舗ジャンル削除
 	if _, err := models.ShopGenreRelations(models.ShopGenreRelationWhere.ShopID.EQ(idInt)).DeleteAll(c, sc.DB); err != nil {
@@ -116,13 +128,6 @@ func (sc ShopsController) Delete(c *gin.Context) {
 
 	// 店舗スタッフ削除
 	if _, err := models.Staffs(models.StaffWhere.ShopID.EQ(idInt)).DeleteAll(c, sc.DB); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	// find shop data
-	shop, err := models.FindShop(c, sc.DB, idInt)
-	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
