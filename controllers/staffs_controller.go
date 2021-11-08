@@ -1,10 +1,10 @@
 package controllers
 
 import (
+	"database/sql"
 	"net/http"
 	"strconv"
 
-	"github.com/akuruwasaki/concafe_map_mock/db"
 	"github.com/akuruwasaki/concafe_map_mock/models"
 	"github.com/gin-gonic/gin"
 	"github.com/volatiletech/sqlboiler/v4/boil"
@@ -12,11 +12,13 @@ import (
 )
 
 // Controller is staffs controller
-type StaffsController struct{}
+type StaffsController struct {
+	DB *sql.DB
+}
 
 // Index action: GET /staffs
 func (sc StaffsController) Index(c *gin.Context) {
-	db := db.Connect()
+	db := sc.DB
 	staffs, err := models.Staffs(qm.Limit(5)).All(c, db)
 	if err != nil {
 		c.AbortWithStatus(400)
@@ -28,7 +30,7 @@ func (sc StaffsController) Index(c *gin.Context) {
 
 // Create action: POST /staffs
 func (sc StaffsController) Create(c *gin.Context) {
-	db := db.Connect()
+	db := sc.DB
 	var staff models.Staff
 
 	if err := c.BindJSON(&staff); err != nil {
@@ -47,7 +49,7 @@ func (sc StaffsController) Create(c *gin.Context) {
 
 // Update action: PUT /staffs/:id
 func (sc StaffsController) Update(c *gin.Context) {
-	db := db.Connect()
+	db := sc.DB
 
 	// パスからID取得
 	id := c.Param("id")
@@ -87,7 +89,7 @@ func (sc StaffsController) Update(c *gin.Context) {
 
 // Delete action: DELETE /staffs/:id
 func (sc StaffsController) Delete(c *gin.Context) {
-	db := db.Connect()
+	db := sc.DB
 
 	// パスからID取得
 	id := c.Param("id")

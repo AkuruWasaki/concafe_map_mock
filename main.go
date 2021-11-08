@@ -16,5 +16,5 @@ func main() {
 		panic(err)
 	}
 
-	server.Init()
+	server.Init(db)
 }

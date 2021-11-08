@@ -10,8 +10,6 @@ import (
 )
 
 func Connect() *sql.DB {
-
-	// TODO: envファイルから情報を取得するようにする
 	user := os.Getenv("MYSQL_USER")
 	password := os.Getenv("MYSQL_PASSWORD")
 	host := os.Getenv("MYSQL_HOST")
