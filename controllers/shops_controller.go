@@ -41,8 +41,16 @@ func (sc ShopsController) Create(c *gin.Context) {
 		return
 	}
 
-	if err := shop.Shop.Insert(c, sc.DB, boil.Infer()); err != nil {
+	// start transaction
+	tx, err := sc.DB.BeginTx(c, nil)
+	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := shop.Shop.Insert(c, tx, boil.Infer()); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		tx.Rollback()
 		return
 	}
 
@@ -52,11 +60,13 @@ func (sc ShopsController) Create(c *gin.Context) {
 		shop_genre_relation.ShopGenreID = genre_id
 		shop_genre_relation.ShopID = shop.Shop.ID
 		// insert
-		if err := shop_genre_relation.Insert(c, sc.DB, boil.Infer()); err != nil {
+		if err := shop_genre_relation.Insert(c, tx, boil.Infer()); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			tx.Rollback()
 			return
 		}
 	}
+	tx.Commit()
 	c.JSON(201, shop)
 }
 
@@ -119,23 +129,37 @@ func (sc ShopsController) Delete(c *gin.Context) {
 		return
 	}
 
+	// start transaction
+	tx, err := sc.DB.BeginTx(c, nil)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
 	// 関連テーブルのデータを削除する。
 	// 店舗ジャンル削除
-	if _, err := models.ShopGenreRelations(models.ShopGenreRelationWhere.ShopID.EQ(idInt)).DeleteAll(c, sc.DB); err != nil {
+	if _, err := models.
+		ShopGenreRelations(models.ShopGenreRelationWhere.ShopID.EQ(idInt)).
+		DeleteAll(c, tx); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		tx.Rollback()
 		return
 	}
 
 	// 店舗スタッフ削除
-	if _, err := models.Staffs(models.StaffWhere.ShopID.EQ(idInt)).DeleteAll(c, sc.DB); err != nil {
+	if _, err := models.Staffs(models.StaffWhere.ShopID.EQ(idInt)).
+		DeleteAll(c, tx); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		tx.Rollback()
 		return
 	}
 
 	// delete shop
-	if _, err = shop.Delete(c, sc.DB); err != nil {
+	if _, err = shop.Delete(c, tx); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		tx.Rollback()
 		return
 	}
 	c.JSON(200, gin.H{"success": "ID: " + strconv.Itoa(idInt) + "の店舗情報を削除しました"})
+	tx.Commit()
 }
