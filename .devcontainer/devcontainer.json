@@ -3,18 +3,42 @@
   "dockerComposeFile": ["../docker-compose.yml"],
   "service": "concafe_map",
   "workspaceFolder": "/app",
-  "settings": {
-    "terminal.integrated.shell.linux": "/bin/bash",
-    "go.toolsManagement.checkForUpdates": "off",
-    "go.gopath": "/go",
-    "go.gocodeAutoBuild": true,
-    "go.formatTool": "gofmt",
-    "go.useLanguageServer": true,
-    "editor.formatOnSave": false,
-    "[go]": {
-      "editor.formatOnSave": true
-    }
-  },
+  // "settings": {
+  //   "terminal.integrated.shell.linux": "/bin/bash",
+  //   "go.toolsManagement.checkForUpdates": "off",
+  //   "go.gopath": "/go",
+  //   "go.gocodeAutoBuild": true,
+  //   "go.formatTool": "gofmt",
+  //   "go.useLanguageServer": true,
+  //   "editor.formatOnSave": false,
+  //   "[go]": {
+  //     "editor.formatOnSave": true
+  //   },
+  //   "go.coverageDecorator": {
+  //     "type": "gutter",
+  //     "coveredHighlightColor": "rgba(64,128,128,0.5)",
+  //     "uncoveredHighlightColor": "rgba(128,64,64,0.25)",
+  //     "coveredGutterStyle": "blockgreen",
+  //     "uncoveredGutterStyle": "blockred"
+  //   },
+  //   "go.coverOnSingleTest": true
+  // },
+  // Set *default* container specific settings.json values on container create.
+	"settings": {
+		"go.toolsManagement.checkForUpdates": "local",
+		"go.useLanguageServer": true,
+		"go.gopath": "/go",
+		"go.goroot": "/usr/local/go",
+		"go.coverOnSave": true,
+	    // "go.coverageDecorator": {
+      //   	"type": "gutter",
+	    //     "coveredHighlightColor": "rgba(64,128,128,0.5)",
+      //   	"uncoveredHighlightColor": "rgba(128,64,64,0.25)",
+	    //     "coveredGutterStyle": "blockgreen",
+      //   	"uncoveredGutterStyle": "blockred"
+	    // },
+    	"go.coverOnSingleTest": true
+	},
   "extensions": [
     "doggy8088.go-extension-pack",
     "formulahendry.code-runner",
