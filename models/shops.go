@@ -14,7 +14,6 @@ import (
 	"time"
 
 	"github.com/friendsofgo/errors"
-	"github.com/volatiletech/null/v8"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
@@ -24,13 +23,13 @@ import (
 
 // Shop is an object representing the database table.
 type Shop struct {
-	ID        int         `boil:"id" json:"id" toml:"id" yaml:"id"`
-	Name      string      `boil:"name" json:"name" toml:"name" yaml:"name"`
-	Address   null.String `boil:"address" json:"address,omitempty" toml:"address" yaml:"address,omitempty"`
-	Tel       null.String `boil:"tel" json:"tel,omitempty" toml:"tel" yaml:"tel,omitempty"`
-	Content   null.String `boil:"content" json:"content,omitempty" toml:"content" yaml:"content,omitempty"`
-	CreatedAt time.Time   `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
-	UpdatedAt time.Time   `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
+	ID        int       `boil:"id" json:"id" toml:"id" yaml:"id"`
+	Name      string    `boil:"name" json:"name" toml:"name" yaml:"name"`
+	Address   string    `boil:"address" json:"address" toml:"address" yaml:"address"`
+	Tel       string    `boil:"tel" json:"tel" toml:"tel" yaml:"tel"`
+	Content   string    `boil:"content" json:"content" toml:"content" yaml:"content"`
+	CreatedAt time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
+	UpdatedAt time.Time `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
 
 	R *shopR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L shopL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -74,30 +73,6 @@ var ShopTableColumns = struct {
 
 // Generated where
 
-type whereHelpernull_String struct{ field string }
-
-func (w whereHelpernull_String) EQ(x null.String) qm.QueryMod {
-	return qmhelper.WhereNullEQ(w.field, false, x)
-}
-func (w whereHelpernull_String) NEQ(x null.String) qm.QueryMod {
-	return qmhelper.WhereNullEQ(w.field, true, x)
-}
-func (w whereHelpernull_String) LT(x null.String) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.LT, x)
-}
-func (w whereHelpernull_String) LTE(x null.String) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.LTE, x)
-}
-func (w whereHelpernull_String) GT(x null.String) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.GT, x)
-}
-func (w whereHelpernull_String) GTE(x null.String) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.GTE, x)
-}
-
-func (w whereHelpernull_String) IsNull() qm.QueryMod    { return qmhelper.WhereIsNull(w.field) }
-func (w whereHelpernull_String) IsNotNull() qm.QueryMod { return qmhelper.WhereIsNotNull(w.field) }
-
 type whereHelpertime_Time struct{ field string }
 
 func (w whereHelpertime_Time) EQ(x time.Time) qm.QueryMod {
@@ -122,17 +97,17 @@ func (w whereHelpertime_Time) GTE(x time.Time) qm.QueryMod {
 var ShopWhere = struct {
 	ID        whereHelperint
 	Name      whereHelperstring
-	Address   whereHelpernull_String
-	Tel       whereHelpernull_String
-	Content   whereHelpernull_String
+	Address   whereHelperstring
+	Tel       whereHelperstring
+	Content   whereHelperstring
 	CreatedAt whereHelpertime_Time
 	UpdatedAt whereHelpertime_Time
 }{
 	ID:        whereHelperint{field: "`shops`.`id`"},
 	Name:      whereHelperstring{field: "`shops`.`name`"},
-	Address:   whereHelpernull_String{field: "`shops`.`address`"},
-	Tel:       whereHelpernull_String{field: "`shops`.`tel`"},
-	Content:   whereHelpernull_String{field: "`shops`.`content`"},
+	Address:   whereHelperstring{field: "`shops`.`address`"},
+	Tel:       whereHelperstring{field: "`shops`.`tel`"},
+	Content:   whereHelperstring{field: "`shops`.`content`"},
 	CreatedAt: whereHelpertime_Time{field: "`shops`.`created_at`"},
 	UpdatedAt: whereHelpertime_Time{field: "`shops`.`updated_at`"},
 }

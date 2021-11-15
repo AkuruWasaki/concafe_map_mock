@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/akuruwasaki/concafe_map_mock/models"
+	"github.com/akuruwasaki/concafe_map_mock/models/modext"
 	"github.com/gin-gonic/gin"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
@@ -37,6 +38,12 @@ func (sc ShopsController) Create(c *gin.Context) {
 
 	// set param
 	if err := c.BindJSON(&shop); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// validation
+	if err := modext.ValidateShop(&shop.Shop); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
