@@ -35,16 +35,45 @@ func ValidateShop(s *models.Shop) []string {
 
 			var errorMessage string
 			fieldName := err.Field()
+			var typ = err.Tag()
 
 			switch fieldName {
 			case "Name":
-				errorMessage = "error message for Name"
+				switch typ {
+				case "required":
+					errorMessage = "error message for required of Name"
+				case "max":
+					errorMessage = "error message for max lengths of Name is 255"
+				default:
+					errorMessage = "error message for Name"
+				}
 			case "Address":
-				errorMessage = "error message for Address"
+				switch typ {
+				case "required":
+					errorMessage = "error message for required of Address"
+				case "max":
+					errorMessage = "error message for max lengths of Address is 255"
+				default:
+					errorMessage = "error message for Address"
+				}
 			case "Tel":
-				errorMessage = "error message for Address"
+				switch typ {
+				case "required":
+					errorMessage = "error message for required of Tel"
+				case "max":
+					errorMessage = "error message for max lengths of Tel is 45"
+				default:
+					errorMessage = "error message for Tel"
+				}
 			case "Content":
-				errorMessage = "error message for Address"
+				switch typ {
+				case "required":
+					errorMessage = "error message for required of Content"
+				case "max":
+					errorMessage = "error message for max lengths of Content is 1000"
+				default:
+					errorMessage = "error message for Content"
+				}
 			default:
 				errorMessage = "error message"
 			}
