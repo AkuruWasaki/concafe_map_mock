@@ -43,8 +43,8 @@ func (sc ShopsController) Create(c *gin.Context) {
 	}
 
 	// validation
-	if err := modext.ValidateShop(&shop.Shop); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	if errMsgs := modext.ValidateShop(&shop.Shop); errMsgs != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": errMsgs})
 		return
 	}
 
