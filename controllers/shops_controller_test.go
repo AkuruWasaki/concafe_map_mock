@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"bytes"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -11,7 +12,7 @@ import (
 	"github.com/magiconair/properties/assert"
 )
 
-func TestIndex(t *testing.T) {
+func TestIndexShop(t *testing.T) {
 	db := db.Connect()
 	w := httptest.NewRecorder()
 	// gin contextの生成
@@ -86,7 +87,7 @@ var post_tests = []struct {
 	{"{\n \"shop\": {\n \"name\": \"更新店舗\",\n \"address\": \"更新住所\",\n \"tel\": \"08978978\"\n },\n \"shop_genre_ids\":[\n \"1\", \"3\"\n ]\n}", 400},
 }
 
-func TestCreate(t *testing.T) {
+func TestCreateShop(t *testing.T) {
 	db := db.Connect()
 	for _, tt := range post_tests {
 		ctrl := ShopsController{}
@@ -101,11 +102,11 @@ func TestCreate(t *testing.T) {
 		ctrl.Create(ginContext)
 
 		// 結果の確認
-		assert.Equal(t, w.Code, tt.status)
+		assert.Equal(t, w.Code, 201)
 	}
 }
 
-func TestUpdate(t *testing.T) {
+func TestUpdateShop(t *testing.T) {
 	db := db.Connect()
 	ctrl := ShopsController{}
 	ctrl.DB = db
@@ -122,7 +123,7 @@ func TestUpdate(t *testing.T) {
 	assert.Equal(t, w.Code, 200)
 }
 
-func TestDelete(t *testing.T) {
+func TestDeleteShop(t *testing.T) {
 	db := db.Connect()
 	ctrl := ShopsController{}
 	ctrl.DB = db
@@ -130,7 +131,11 @@ func TestDelete(t *testing.T) {
 
 	// gin contextの生成
 	ginContext, _ := gin.CreateTestContext(w)
-	ginContext.Request, _ = http.NewRequest("PUT", "/shops/465", nil)
+	ginContext.Request, _ = http.NewRequest("DELETE", "/shops/477", nil)
 
 	ctrl.Delete(ginContext)
+	// 結果の確認
+	assert.Equal(t, w.Code, 200)
+	// レスポンスボディの確認
+	log.Println(w.Body)
 }
