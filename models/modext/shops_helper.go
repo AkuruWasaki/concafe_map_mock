@@ -2,6 +2,7 @@
 package modext
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/akuruwasaki/concafe_map_mock/models"
@@ -37,45 +38,13 @@ func ValidateShop(s *models.Shop) []string {
 			fieldName := err.Field()
 			var typ = err.Tag()
 
-			switch fieldName {
-			case "Name":
-				switch typ {
-				case "required":
-					errorMessage = "error message for required of Name"
-				case "max":
-					errorMessage = "error message for max lengths of Name is 255"
-				default:
-					errorMessage = "error message for Name"
-				}
-			case "Address":
-				switch typ {
-				case "required":
-					errorMessage = "error message for required of Address"
-				case "max":
-					errorMessage = "error message for max lengths of Address is 255"
-				default:
-					errorMessage = "error message for Address"
-				}
-			case "Tel":
-				switch typ {
-				case "required":
-					errorMessage = "error message for required of Tel"
-				case "max":
-					errorMessage = "error message for max lengths of Tel is 45"
-				default:
-					errorMessage = "error message for Tel"
-				}
-			case "Content":
-				switch typ {
-				case "required":
-					errorMessage = "error message for required of Content"
-				case "max":
-					errorMessage = "error message for max lengths of Content is 1000"
-				default:
-					errorMessage = "error message for Content"
-				}
+			switch typ {
+			case "required":
+				errorMessage = fmt.Sprintf("%sは必須項目です。", fieldName)
+			case "max":
+				errorMessage = fmt.Sprintf("%sは最大%s文字です。", fieldName, err.Param())
 			default:
-				errorMessage = "error message"
+				errorMessage = fmt.Sprintf("error message for %s", fieldName)
 			}
 			errorMessages = append(errorMessages, errorMessage)
 		}
