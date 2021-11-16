@@ -11,9 +11,9 @@ import (
 
 type Shop struct {
 	Name      string `validate:"required,max=255"`
-	Address   string `validate:"required,max=255"`
-	Tel       string `validate:"required,max=45"`
-	Content   string `validate:"required,max=1000"`
+	Address   string `validate:"max=255"`
+	Tel       string `validate:"max=45"`
+	Content   string `validate:"max=1000"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }

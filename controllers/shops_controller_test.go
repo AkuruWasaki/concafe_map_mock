@@ -114,7 +114,7 @@ func TestUpdate(t *testing.T) {
 	// gin contextの生成
 	ginContext, _ := gin.CreateTestContext(w)
 	body := bytes.NewBufferString("{\n \"name\": \"更新店舗\",\n \"address\": \"更新住所\",\n \"tel\": \"08978978\",\n \"content\": \"aaaa\"\n}")
-	ginContext.Request, _ = http.NewRequest("PUT", "/shops/465", body)
+	ginContext.Request, _ = http.NewRequest("PUT", "/shops/465", body) // idはDBにあるデータにしておく。
 
 	ctrl.Update(ginContext)
 
@@ -123,5 +123,14 @@ func TestUpdate(t *testing.T) {
 }
 
 func TestDelete(t *testing.T) {
+	db := db.Connect()
+	ctrl := ShopsController{}
+	ctrl.DB = db
+	w := httptest.NewRecorder()
 
+	// gin contextの生成
+	ginContext, _ := gin.CreateTestContext(w)
+	ginContext.Request, _ = http.NewRequest("PUT", "/shops/465", nil)
+
+	ctrl.Delete(ginContext)
 }
