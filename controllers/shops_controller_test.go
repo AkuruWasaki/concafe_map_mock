@@ -3,6 +3,7 @@ package controllers
 import (
 	"bytes"
 	"database/sql"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -33,24 +34,18 @@ func TestIndexShop(t *testing.T) {
 	r := setUpRouter(db)
 	w := httptest.NewRecorder()
 	// gin contextの生成
-	ginContext, _ := gin.CreateTestContext(httptest.NewRecorder())
+	ginContext, _ := gin.CreateTestContext(w)
 
 	// リクエストの生成
 	req, err := http.NewRequest("GET", "/shops", nil)
 	if err != nil {
-		// エラー処理を入れる
-		t.FailNow()
-		return
+		log.Printf("error: %v", err)
 	}
 
 	// リクエスト情報をcontextに入れる
 	ginContext.Request = req
 
 	r.ServeHTTP(w, ginContext.Request)
-
-	ctrl := ShopsController{}
-	ctrl.DB = db
-	ctrl.Index(ginContext)
 
 	// 結果の確認
 	// assert.Equal(t, bodyStr, w.Result().Body)
@@ -108,34 +103,37 @@ var post_tests = []struct {
 
 func TestCreateShop(t *testing.T) {
 	db := db.Connect()
+	r := setUpRouter(db)
 	for _, tt := range post_tests {
-		ctrl := ShopsController{}
-		ctrl.DB = db
 		w := httptest.NewRecorder()
-
 		// gin contextの生成
 		ginContext, _ := gin.CreateTestContext(w)
 		body := bytes.NewBufferString(tt.body)
-		ginContext.Request, _ = http.NewRequest("POST", "/shops", body)
-
-		ctrl.Create(ginContext)
+		req, err := http.NewRequest("POST", "/shops", body)
+		if err != nil {
+			log.Printf("error: %v", err)
+		}
+		ginContext.Request = req
+		r.ServeHTTP(w, ginContext.Request)
 
 		// 結果の確認
-		assert.Equal(t, w.Code, 201)
+		assert.Equal(t, w.Code, tt.status)
 	}
 }
 
 func TestUpdateShop(t *testing.T) {
 	db := db.Connect()
 	r := setUpRouter(db)
-	ctrl := ShopsController{}
-	ctrl.DB = db
 	w := httptest.NewRecorder()
 
 	// gin contextの生成
 	ginContext, _ := gin.CreateTestContext(w)
 	body := bytes.NewBufferString("{\n \"name\": \"更新店舗\",\n \"address\": \"更新住所\",\n \"tel\": \"08978978\",\n \"content\": \"aaaa\"\n}")
-	ginContext.Request, _ = http.NewRequest("PUT", "/shops/465", body) // idはDBにあるデータにしておく。
+	req, err := http.NewRequest("PUT", "/shops/492", body) // idはDBにあるデータにしておく。
+	if err != nil {
+		log.Printf("error: %v", err)
+	}
+	ginContext.Request = req
 
 	r.ServeHTTP(w, ginContext.Request)
 
@@ -151,14 +149,13 @@ func TestDeleteShop(t *testing.T) {
 	// gin contextの生成
 	ginContext, _ := gin.CreateTestContext(w)
 	//
-	req, err := http.NewRequest("DELETE", "/shops/490", nil)
-	ginContext.Request = req
+	req, err := http.NewRequest("DELETE", "/shops/491", nil)
 	if err != nil {
-		t.Errorf("test failed: %e", err)
-		t.FailNow()
+		log.Printf("error: %v", err)
 	}
+	ginContext.Request = req
 
-	r.ServeHTTP(ginContext.Writer, ginContext.Request)
+	r.ServeHTTP(w, ginContext.Request)
 
 	// 結果の確認
 	assert.Equal(t, ginContext.Writer.Status(), 200)
