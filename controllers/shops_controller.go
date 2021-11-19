@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"database/sql"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -118,20 +119,20 @@ func (sc ShopsController) Update(c *gin.Context) {
 func (sc ShopsController) Delete(c *gin.Context) {
 	// パスからID取得
 	// idをint型に変換
+	log.Println("call delete api")
+	log.Println(c)
 	idInt, err := strconv.Atoi(c.Param("id"))
+	log.Println(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		log.Println("not found ID")
+		c.JSON(http.StatusBadRequest, gin.H{"body": err.Error()})
 		return
 	}
 
 	// find shop data
 	shop, err := models.FindShop(c, sc.DB, idInt)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	if err != nil {
+		log.Println("not found shop")
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -139,6 +140,7 @@ func (sc ShopsController) Delete(c *gin.Context) {
 	// start transaction
 	tx, err := sc.DB.BeginTx(c, nil)
 	if err != nil {
+		log.Println("transaction error")
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -148,6 +150,7 @@ func (sc ShopsController) Delete(c *gin.Context) {
 	if _, err := models.
 		ShopGenreRelations(models.ShopGenreRelationWhere.ShopID.EQ(idInt)).
 		DeleteAll(c, tx); err != nil {
+		log.Println("faild to delete shop genre relations")
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		tx.Rollback()
 		return
@@ -156,6 +159,7 @@ func (sc ShopsController) Delete(c *gin.Context) {
 	// 店舗スタッフ削除
 	if _, err := models.Staffs(models.StaffWhere.ShopID.EQ(idInt)).
 		DeleteAll(c, tx); err != nil {
+		log.Println("faild to delete shop staffs")
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		tx.Rollback()
 		return
@@ -163,10 +167,12 @@ func (sc ShopsController) Delete(c *gin.Context) {
 
 	// delete shop
 	if _, err = shop.Delete(c, tx); err != nil {
+		log.Println("faild to delete shop")
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		tx.Rollback()
 		return
 	}
-	c.JSON(200, gin.H{"success": "ID: " + strconv.Itoa(idInt) + "の店舗情報を削除しました"})
+	log.Println("success delete")
 	tx.Commit()
+	c.JSON(200, gin.H{"success": "ID: " + strconv.Itoa(idInt) + "の店舗情報を削除しました"})
 }

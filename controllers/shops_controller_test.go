@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"bytes"
-	"log"
+	"database/sql"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -12,8 +12,25 @@ import (
 	"github.com/magiconair/properties/assert"
 )
 
+func setUpRouter(db *sql.DB) *gin.Engine {
+	r := gin.Default()
+
+	s := r.Group("/shops")
+	{
+		ctrl := ShopsController{}
+		ctrl.DB = db
+		s.GET("", ctrl.Index)
+		s.POST("", ctrl.Create)
+		s.PUT("/:id", ctrl.Update)
+		s.DELETE("/:id", ctrl.Delete)
+	}
+
+	return r
+}
+
 func TestIndexShop(t *testing.T) {
 	db := db.Connect()
+	r := setUpRouter(db)
 	w := httptest.NewRecorder()
 	// gin contextの生成
 	ginContext, _ := gin.CreateTestContext(httptest.NewRecorder())
@@ -28,6 +45,8 @@ func TestIndexShop(t *testing.T) {
 
 	// リクエスト情報をcontextに入れる
 	ginContext.Request = req
+
+	r.ServeHTTP(w, ginContext.Request)
 
 	ctrl := ShopsController{}
 	ctrl.DB = db
@@ -108,6 +127,7 @@ func TestCreateShop(t *testing.T) {
 
 func TestUpdateShop(t *testing.T) {
 	db := db.Connect()
+	r := setUpRouter(db)
 	ctrl := ShopsController{}
 	ctrl.DB = db
 	w := httptest.NewRecorder()
@@ -117,7 +137,7 @@ func TestUpdateShop(t *testing.T) {
 	body := bytes.NewBufferString("{\n \"name\": \"更新店舗\",\n \"address\": \"更新住所\",\n \"tel\": \"08978978\",\n \"content\": \"aaaa\"\n}")
 	ginContext.Request, _ = http.NewRequest("PUT", "/shops/465", body) // idはDBにあるデータにしておく。
 
-	ctrl.Update(ginContext)
+	r.ServeHTTP(w, ginContext.Request)
 
 	// 結果の確認
 	assert.Equal(t, w.Code, 200)
@@ -125,17 +145,21 @@ func TestUpdateShop(t *testing.T) {
 
 func TestDeleteShop(t *testing.T) {
 	db := db.Connect()
-	ctrl := ShopsController{}
-	ctrl.DB = db
+	r := setUpRouter(db)
 	w := httptest.NewRecorder()
 
 	// gin contextの生成
 	ginContext, _ := gin.CreateTestContext(w)
-	ginContext.Request, _ = http.NewRequest("DELETE", "/shops/477", nil)
+	//
+	req, err := http.NewRequest("DELETE", "/shops/490", nil)
+	ginContext.Request = req
+	if err != nil {
+		t.Errorf("test failed: %e", err)
+		t.FailNow()
+	}
 
-	ctrl.Delete(ginContext)
+	r.ServeHTTP(ginContext.Writer, ginContext.Request)
+
 	// 結果の確認
-	assert.Equal(t, w.Code, 200)
-	// レスポンスボディの確認
-	log.Println(w.Body)
+	assert.Equal(t, ginContext.Writer.Status(), 200)
 }

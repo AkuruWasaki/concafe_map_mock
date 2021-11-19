@@ -15,3 +15,6 @@ RUN go get github.com/gin-gonic/gin \
   && go get github.com/joho/godotenv \
   && go get golang.org/x/tools/gopls \
   && go get github.com/go-delve/delve/cmd/dlv
+
+# run api server
+CMD ["go","run","main.go"]
