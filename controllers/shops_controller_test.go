@@ -13,7 +13,7 @@ import (
 	"github.com/magiconair/properties/assert"
 )
 
-func setUpRouter(db *sql.DB) *gin.Engine {
+func setupShopRouter(db *sql.DB) *gin.Engine {
 	r := gin.Default()
 
 	s := r.Group("/shops")
@@ -31,7 +31,7 @@ func setUpRouter(db *sql.DB) *gin.Engine {
 
 func TestIndexShop(t *testing.T) {
 	db := db.Connect()
-	r := setUpRouter(db)
+	r := setupShopRouter(db)
 	w := httptest.NewRecorder()
 	// gin contextの生成
 	ginContext, _ := gin.CreateTestContext(w)
@@ -103,7 +103,7 @@ var post_tests = []struct {
 
 func TestCreateShop(t *testing.T) {
 	db := db.Connect()
-	r := setUpRouter(db)
+	r := setupShopRouter(db)
 	for _, tt := range post_tests {
 		w := httptest.NewRecorder()
 		// gin contextの生成
@@ -123,7 +123,7 @@ func TestCreateShop(t *testing.T) {
 
 func TestUpdateShop(t *testing.T) {
 	db := db.Connect()
-	r := setUpRouter(db)
+	r := setupShopRouter(db)
 	w := httptest.NewRecorder()
 
 	// gin contextの生成
@@ -143,7 +143,7 @@ func TestUpdateShop(t *testing.T) {
 
 func TestDeleteShop(t *testing.T) {
 	db := db.Connect()
-	r := setUpRouter(db)
+	r := setupShopRouter(db)
 	w := httptest.NewRecorder()
 
 	// gin contextの生成

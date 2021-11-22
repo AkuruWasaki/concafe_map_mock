@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/akuruwasaki/concafe_map_mock/models"
+	"github.com/akuruwasaki/concafe_map_mock/models/modext"
 	"github.com/gin-gonic/gin"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
@@ -34,6 +35,12 @@ func (sc StaffsController) Create(c *gin.Context) {
 	if err := c.BindJSON(&staff); err != nil {
 		c.AbortWithStatus(400)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// validation
+	if errMsgs := modext.ValidateStaff(&staff); errMsgs != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": errMsgs})
 		return
 	}
 
