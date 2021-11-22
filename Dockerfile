@@ -8,6 +8,6 @@ WORKDIR /app
 
 COPY . ./
 RUN go mod download
-RUN go build
+RUN go build .
 
-CMD [ "./concafe_map" ]
+CMD [ "./concafe_map_mock" ]
